@@ -3,26 +3,26 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0a0a0a;
-      --foreground: #ededed;
-    }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
   }
+}
 
   * {
     @apply border-gray-200;
   }
 
-  body {
+body {
     @apply bg-gray-50 text-gray-900 font-sans;
-    background: var(--background);
-    color: var(--foreground);
+  background: var(--background);
+  color: var(--foreground);
   }
 
   h1, h2, h3, h4, h5, h6 {

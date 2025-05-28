@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MotionConfig transition={{ duration: 0.3, ease: "easeInOut" }}>
-          {children}
+        {children}
         </MotionConfig>
       </body>
     </html>
