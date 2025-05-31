@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { MotionConfig } from "framer-motion";
+import { cookies } from "next/headers";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { AuthProvider } from "./components/providers/AuthProvider";
+import { MotionProvider } from "./components/providers/MotionProvider";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,19 +23,30 @@ export const metadata: Metadata = {
   description: "A modern discussion forum built with Next.js and Supabase",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <MotionConfig transition={{ duration: 0.3, ease: "easeInOut" }}>
-        {children}
-        </MotionConfig>
+        <AuthProvider initialSession={session}>
+          <MotionProvider>
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </MotionProvider>
+        </AuthProvider>
       </body>
     </html>
   );
