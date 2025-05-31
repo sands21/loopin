@@ -5,17 +5,15 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/app/hooks/useUser";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, isLoading } = useUser();
   const supabase = createClientComponentClient();
-  const router = useRouter();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/");
+    window.location.href = "/";
     setIsMobileMenuOpen(false);
   };
 
@@ -68,9 +66,15 @@ export function Header() {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/dashboard"
-                  className="bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md"
+                  className="relative text-gray-700 hover:text-gray-900 transition-colors text-sm font-semibold px-4 py-2 group"
                 >
-                  Dashboard
+                  <motion.span
+                    whileHover={{ scale: 1.05 }}
+                    className="relative py-2"
+                  >
+                    Dashboard
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
+                  </motion.span>
                 </Link>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
@@ -88,7 +92,7 @@ export function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <Link href="/login" className="btn btn-ghost text-sm font-medium px-4 py-2">
+                <Link href="/login" className="text-gray-700 hover:text-gray-900 text-sm font-medium px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
                   Login
                 </Link>
                 <Link href="/register" className="btn btn-primary text-sm font-medium px-4 py-2 shadow-lg hover:shadow-xl transition-shadow">
@@ -181,10 +185,16 @@ export function Header() {
                     <div className="flex flex-col space-y-2">
                       <Link
                         href="/dashboard"
-                        className="bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors text-sm font-medium px-4 py-2 rounded-lg w-full text-center"
+                        className="relative text-gray-700 hover:text-gray-900 transition-colors text-sm font-semibold px-4 py-2 block text-center group"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        Dashboard
+                        <motion.span
+                          whileHover={{ scale: 1.05 }}
+                          className="relative py-2"
+                        >
+                          Dashboard
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
+                        </motion.span>
                       </Link>
                       <button
                         onClick={handleLogout}
@@ -198,7 +208,7 @@ export function Header() {
                   <div className="flex flex-col space-y-2">
                     <Link
                       href="/login"
-                      className="btn btn-ghost text-sm w-full"
+                      className="text-gray-700 hover:text-gray-900 text-sm font-medium px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors text-center"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Login

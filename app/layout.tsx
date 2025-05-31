@@ -42,7 +42,7 @@ export default async function RootLayout({
           <MotionProvider>
             <Header />
             <main className="flex-1">
-              {children}
+        {children}
             </main>
             <Footer />
           </MotionProvider>
