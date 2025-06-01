@@ -84,6 +84,7 @@ export interface Database {
           created_at: string
           post_count: number
           thread_count: number
+          role: string
         }
         Insert: {
           id: string
@@ -94,6 +95,7 @@ export interface Database {
           created_at?: string
           post_count?: number
           thread_count?: number
+          role?: string
         }
         Update: {
           id?: string
@@ -104,6 +106,7 @@ export interface Database {
           created_at?: string
           post_count?: number
           thread_count?: number
+          role?: string
         }
       }
     }

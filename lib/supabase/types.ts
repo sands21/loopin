@@ -39,6 +39,7 @@ export interface Profile {
   created_at: string
   post_count: number
   thread_count: number
+  role: 'user' | 'moderator' | 'admin'
 }
 
 export type Tables = Database['public']['Tables'] 
