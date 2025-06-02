@@ -13,24 +13,28 @@ export async function getPosts(threadId: string) {
 
     // Get profiles for all post authors
     const postUserIds = postsData ? [...new Set(postsData.map(post => post.user_id))] : []
-    let postProfiles: { id: string; email: string }[] = []
+    let postProfiles: { id: string; email: string; display_name: string | null }[] = []
     
     if (postUserIds.length > 0) {
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, email')
+        .select('id, email, display_name')
         .in('id', postUserIds)
       postProfiles = profiles || []
     }
 
     // Create profile lookup map
-    const profileMap = new Map(postProfiles.map(p => [p.id, p.email]))
+    const profileMap = new Map(postProfiles.map(p => [p.id, { email: p.email, display_name: p.display_name }]))
 
-    // Return posts with author names
-    return (postsData || []).map(post => ({
-      ...post,
-      authorName: profileMap.get(post.user_id) || 'Unknown',
-    }))
+    // Return posts with author names (username or email fallback)
+    return (postsData || []).map(post => {
+      const profile = profileMap.get(post.user_id)
+      const authorName = profile?.display_name || profile?.email || 'Unknown'
+      return {
+        ...post,
+        authorName,
+      }
+    })
   } catch (error) {
     console.error('Error fetching posts:', error)
     throw error
@@ -60,7 +64,7 @@ export async function getThreads() {
     // Fetch profiles for these user IDs
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, email')
+      .select('id, email, display_name')
       .in('id', userIds)
     
     if (profilesError) {
@@ -70,13 +74,18 @@ export async function getThreads() {
     }
 
     // Create a map for quick lookup
-    const profileMap = new Map(profiles?.map(p => [p.id, p.email]) || [])
+    const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name }]) || [])
 
-    // Combine threads with emails
-    return threadsData.map(thread => ({
-      ...thread,
-      user_email: profileMap.get(thread.user_id) || null
-    }))
+    // Combine threads with usernames/emails
+    return threadsData.map(thread => {
+      const profile = profileMap.get(thread.user_id)
+      const user_display_name = profile?.display_name || profile?.email || null
+      return {
+        ...thread,
+        user_email: profile?.email || null,
+        user_display_name
+      }
+    })
   } catch (error) {
     console.error('Error fetching threads:', error)
     throw error

@@ -8,12 +8,21 @@ import { supabase } from "@/lib/supabase/client";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, isLoading } = useUser();
+  const { user, isLoading, profile } = useUser();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = "/";
     setIsMobileMenuOpen(false);
+  };
+
+  const getUserDisplayName = () => {
+    return profile?.display_name || user?.email || 'User';
+  };
+
+  const getUserInitial = () => {
+    const displayName = getUserDisplayName();
+    return displayName[0]?.toUpperCase() || 'U';
   };
 
   const navLinks = [
@@ -76,11 +85,11 @@ export function Header() {
                   </motion.span>
                 </Link>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                  <Link href="/profile" className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
                     <span className="text-white text-sm font-medium">
-                      {user.email?.[0]?.toUpperCase()}
+                      {getUserInitial()}
                     </span>
-                  </div>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
@@ -174,11 +183,11 @@ export function Header() {
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-medium">
-                          {user.email?.[0]?.toUpperCase()}
+                          {getUserInitial()}
                         </span>
                       </div>
                       <span className="text-gray-900 font-medium">
-                        {user.email}
+                        {getUserDisplayName()}
                       </span>
                     </div>
                     <div className="flex flex-col space-y-2">
@@ -192,6 +201,19 @@ export function Header() {
                           className="relative py-2"
                         >
                           Dashboard
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
+                        </motion.span>
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className="relative text-gray-700 hover:text-gray-900 transition-colors text-sm font-semibold px-4 py-2 block text-center group"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <motion.span
+                          whileHover={{ scale: 1.05 }}
+                          className="relative py-2"
+                        >
+                          Profile
                           <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
                         </motion.span>
                       </Link>

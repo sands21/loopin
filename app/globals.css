@@ -3,63 +3,33 @@
 @tailwind utilities;
 
 @layer base {
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
   }
-}
-
-  * {
-    @apply border-gray-200;
-  }
-
-body {
-    @apply bg-gray-50 text-gray-900 font-sans;
-  background: var(--background);
-  color: var(--foreground);
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-semibold;
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
   }
 }
 
 @layer components {
-  .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  .container-sm {
-    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  .container-xs {
-    @apply max-w-2xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  .card {
-    @apply bg-white rounded-lg shadow-md border border-gray-200;
-  }
-
-  .card-hover {
-    @apply card transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
-  }
-
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
-
+  
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg focus:ring-purple-500;
   }
-
+  
   .btn-secondary {
-    @apply btn bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+  }
+  
+  .btn-ghost {
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-500;
+  }
+  
+  .container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 }

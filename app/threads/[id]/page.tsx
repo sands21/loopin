@@ -37,7 +37,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
   const [postLoading, setPostLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  const { user: currentUser, canModerate } = useUser()
+  const { user: currentUser, canModerate, profile } = useUser()
   const router = useRouter()
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         // Get thread author's profile
         const { data: threadProfile } = await supabase
           .from('profiles')
-          .select('email')
+          .select('email, display_name')
           .eq('id', threadData.user_id)
           .single()
 
@@ -77,7 +77,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         // Format the thread data
         setThread({
           ...threadData,
-          authorName: threadProfile?.email || 'Unknown',
+          authorName: threadProfile?.display_name || threadProfile?.email || 'Unknown',
         })
 
         // Fetch posts using the utility function
@@ -323,12 +323,12 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold">
-                      {currentUser.email?.[0]?.toUpperCase()}
+                      {(profile?.display_name || currentUser.email)?.[0]?.toUpperCase()}
                     </span>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900">Post a reply</h3>
-                    <p className="text-sm text-gray-600">Replying as {currentUser.email}</p>
+                    <p className="text-sm text-gray-600">Replying as {profile?.display_name || currentUser.email}</p>
                   </div>
                 </div>
                 
