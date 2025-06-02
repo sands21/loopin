@@ -4,18 +4,27 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
-import { Thread, Post } from '@/lib/supabase/types'
+import { Thread } from '@/lib/supabase/types'
+import { getPosts } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
-import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from '@/app/components/ui/transitions'
+import { PageTransition, FadeIn } from '@/app/components/ui/transitions'
 import { useUser } from '@/app/hooks/useUser'
 import ThreadModeration from '@/app/components/threads/thread-moderation'
+import CommentList from '@/app/components/threads/comment-list'
 
 interface ThreadWithAuthor extends Thread {
   authorName: string
 }
 
-interface PostWithAuthor extends Post {
+interface PostWithAuthor {
+  id: string
+  thread_id: string
+  content: string
+  user_id: string
+  is_anonymous: boolean
+  image_url?: string | null
+  created_at: string
   authorName: string
 }
 
@@ -65,41 +74,15 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
           .update({ view_count: threadData.view_count + 1 })
           .eq('id', threadId)
 
-        // Fetch posts for this thread
-        const { data: postsData, error: postsError } = await supabase
-          .from('posts')
-          .select('*')
-          .eq('thread_id', threadId)
-          .order('created_at', { ascending: true })
-
-        if (postsError) throw postsError
-
-        // Get profiles for all post authors
-        const postUserIds = postsData ? [...new Set(postsData.map(post => post.user_id))] : []
-        let postProfiles: { id: string; email: string }[] = []
-        
-        if (postUserIds.length > 0) {
-          const { data: profiles } = await supabase
-            .from('profiles')
-            .select('id, email')
-            .in('id', postUserIds)
-          postProfiles = profiles || []
-        }
-
-        // Create profile lookup map
-        const profileMap = new Map(postProfiles.map(p => [p.id, p.email]))
-
         // Format the thread data
         setThread({
           ...threadData,
           authorName: threadProfile?.email || 'Unknown',
         })
 
-        // Format the posts data
-        setPosts((postsData || []).map(post => ({
-          ...post,
-          authorName: profileMap.get(post.user_id) || 'Unknown',
-        })))
+        // Fetch posts using the utility function
+        const postsData = await getPosts(threadId)
+        setPosts(postsData)
       } catch (error) {
         console.error('Error fetching thread:', error)
         setError('Failed to load thread data.')
@@ -147,37 +130,9 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
       // Clear the input and refresh the posts
       setNewPostContent('')
       
-      // Refetch the thread and posts
-      const { data: postsData, error: postsRefetchError } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('thread_id', threadId)
-        .order('created_at', { ascending: true })
-
-      if (postsRefetchError) {
-        console.error('Error refetching posts:', postsRefetchError)
-        return;
-      }
-
-      // Update the posts
-      if (postsData && postsData.length > 0) {
-        // Get profiles for all post authors
-        const postUserIds = [...new Set(postsData.map(post => post.user_id))]
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, email')
-          .in('id', postUserIds)
-        
-        // Create profile lookup map
-        const profileMap = new Map((profiles || []).map(p => [p.id, p.email]))
-        
-        setPosts(postsData.map(post => ({
-          ...post,
-          authorName: profileMap.get(post.user_id) || 'Unknown',
-        })))
-      } else {
-        setPosts([])
-      }
+      // Refetch the posts using the utility function
+      const postsData = await getPosts(threadId)
+      setPosts(postsData)
 
     } catch (error) {
       console.error('Error posting reply:', error)
@@ -357,59 +312,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                 </h2>
               </div>
               
-              {posts.length === 0 ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-100"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No replies yet</h3>
-                  <p className="text-gray-500">Be the first to share your thoughts!</p>
-                </motion.div>
-              ) : (
-                <StaggerContainer>
-                  {posts.map((post, index) => (
-                    <StaggerItem key={post.id}>
-                      <motion.div
-                        className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 mb-4 border border-gray-100 hover:shadow-md transition-all duration-300"
-                        whileHover={{ scale: 1.01 }}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <div className="flex items-start space-x-4">
-                          {/* Reply Avatar */}
-                          <div className="flex-shrink-0">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-md">
-                              <span className="text-white font-medium text-sm">
-                                {post.authorName[0]?.toUpperCase()}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Reply Content */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="font-semibold text-gray-900">{post.authorName}</span>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                              </span>
-                            </div>
-                            <div className="prose max-w-none text-gray-700 leading-relaxed">
-                              {post.content}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    </StaggerItem>
-                  ))}
-                </StaggerContainer>
-              )}
+              <CommentList posts={posts} />
             </div>
           </FadeIn>
 

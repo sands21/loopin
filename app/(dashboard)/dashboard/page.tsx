@@ -121,7 +121,7 @@ export default function DashboardPage() {
           
           <div className="bg-white shadow rounded-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Recent Discussions</h2>
+              <h2 className="text-xl font-bold text-gray-900">Recent Discussions</h2>
               <Link href="/threads">
                 <Button size="sm" variant="secondary">View All Discussions</Button>
               </Link>
