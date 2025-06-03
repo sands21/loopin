@@ -11,6 +11,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { PageTransition, FadeIn } from '@/app/components/ui/transitions'
 import { useUser } from '@/app/hooks/useUser'
+import { useIdentity } from '@/app/components/providers/identity-provider'
 import ThreadModeration from '@/app/components/threads/thread-moderation'
 import CommentList from '@/app/components/threads/comment-list'
 import FileUpload from '@/app/components/ui/file-upload'
@@ -42,6 +43,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
   const [error, setError] = useState<string | null>(null)
   
   const { user: currentUser, canModerate, profile } = useUser()
+  const { isAnonymousMode } = useIdentity()
   const router = useRouter()
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         // Format the thread data
         setThread({
           ...threadData,
-          authorName: threadProfile?.display_name || threadProfile?.email || 'Unknown',
+          authorName: threadData.is_anonymous ? 'Anonymous' : (threadProfile?.display_name || threadProfile?.email || 'Unknown'),
           image_url: threadData.image_url,
         })
 
@@ -107,7 +109,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
     setError(null)
 
     try {
-      // Insert the post
+      // Insert the post with global anonymous setting
       const { error: postError } = await supabase
         .from('posts')
         .insert([
@@ -116,6 +118,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
             content: newPostContent,
             user_id: currentUser.id,
             image_url: newPostImageUrl,
+            is_anonymous: isAnonymousMode,
             is_solution: false
           }
         ])
@@ -308,21 +311,57 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
                   {/* Thread Image Display */}
                   {thread.image_url && (
-                    <div className="mt-6">
-                      <div 
-                        className="relative max-w-full h-auto rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
-                        onClick={() => thread.image_url && window.open(thread.image_url, '_blank')}
-                      >
-                        <Image
-                          src={thread.image_url}
-                          alt="Thread attachment"
-                          width={800}
-                          height={600}
-                          className="w-full h-auto object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
+                    <motion.div 
+                      className="mt-8"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                      <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 border border-gray-200 shadow-sm">
+                        <motion.div 
+                          className="relative w-fit max-w-lg mx-auto rounded-xl overflow-hidden cursor-pointer group shadow-lg hover:shadow-xl transition-shadow duration-300"
+                          onClick={() => thread.image_url && window.open(thread.image_url, '_blank')}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <Image
+                            src={thread.image_url}
+                            alt="Thread attachment"
+                            width={800}
+                            height={600}
+                            className="max-w-lg max-h-80 w-auto h-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
+                          />
+                          {/* Overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                          {/* Zoom Icon */}
+                          <motion.div 
+                            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            whileHover={{ scale: 1.1 }}
+                          >
+                            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                            </svg>
+                          </motion.div>
+                        </motion.div>
+                        {/* Image Caption */}
+                        <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                          <span className="flex items-center space-x-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>Thread attachment</span>
+                          </span>
+                          <span className="flex items-center space-x-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            <span>Click to view full size</span>
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
                   {/* Moderation Controls */}
@@ -362,7 +401,13 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900">Post a reply</h3>
-                    <p className="text-sm text-gray-600">Replying as {profile?.display_name || currentUser.email}</p>
+                    <p className="text-sm text-gray-600">
+                      Replying as {isAnonymousMode ? (
+                        <span className="text-gray-500 font-medium">Anonymous</span>
+                      ) : (
+                        <span className="text-purple-700 font-medium">{profile?.display_name || currentUser.email}</span>
+                      )}
+                    </p>
                   </div>
                 </div>
                 

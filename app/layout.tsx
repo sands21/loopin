@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { AuthProvider } from "./components/providers/AuthProvider";
 import { MotionProvider } from "./components/providers/MotionProvider";
+import { IdentityProvider } from './components/providers/identity-provider'
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import "./globals.css";
@@ -18,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Loopin - Discussion Forum",
-  description: "A modern discussion forum built with Next.js and Supabase",
+  title: "Loopin - Modern Discussion Forum",
+  description: "A beautiful discussion forum built with Next.js and Supabase",
 };
 
 export default async function RootLayout({
@@ -39,11 +40,15 @@ export default async function RootLayout({
       >
         <AuthProvider initialSession={session}>
           <MotionProvider>
-            <Header />
-            <main className="flex-1">
-        {children}
-            </main>
-            <Footer />
+            <IdentityProvider>
+              <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
+                <Header />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </IdentityProvider>
           </MotionProvider>
         </AuthProvider>
       </body>

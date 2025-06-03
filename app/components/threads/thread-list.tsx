@@ -7,6 +7,7 @@ import { Thread } from '@/lib/supabase/types'
 import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { StaggerContainer, StaggerItem } from '@/app/components/ui/transitions'
+import { useRouter } from 'next/navigation'
 
 interface ThreadListProps {
   threads: Thread[]
@@ -15,6 +16,7 @@ interface ThreadListProps {
 
 export default function ThreadList({ threads, loading }: ThreadListProps) {
   const [sortBy, setSortBy] = useState<'newest' | 'popular'>('newest')
+  const router = useRouter()
   
   // Apply sorting
   const sortedThreads = [...threads].sort((a, b) => {
@@ -147,19 +149,43 @@ export default function ThreadList({ threads, loading }: ThreadListProps) {
                       {thread.content}
                     </p>
 
-                    {/* Thread Image Preview */}
+                    {/* Image preview */}
                     {thread.image_url && (
-                      <div className="mb-4">
-                        <div className="relative w-full max-w-md h-32 rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                          <Image
-                            src={thread.image_url}
-                            alt="Thread attachment"
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
+                      <motion.div 
+                        className="mt-4 relative"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-2 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                          <motion.div 
+                            className="relative w-full h-48 rounded-lg overflow-hidden cursor-pointer group shadow-sm hover:shadow-md transition-shadow duration-300"
+                            onClick={() => router.push(`/threads/${thread.id}`)}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Image
+                              src={thread.image_url}
+                              alt="Thread preview"
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                            {/* Overlay */}
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                            {/* Preview Badge */}
+                            <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <span className="flex items-center space-x-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>View post</span>
+                              </span>
+                            </div>
+                          </motion.div>
                         </div>
-                      </div>
+                      </motion.div>
                     )}
 
                     {/* Thread Metadata */}

@@ -7,6 +7,7 @@ export interface Thread {
   content: string
   user_id: string
   image_url?: string | null
+  is_anonymous: boolean
   created_at: string
   updated_at: string
   category?: string

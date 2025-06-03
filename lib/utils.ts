@@ -26,12 +26,16 @@ export async function getPosts(threadId: string) {
     // Create profile lookup map
     const profileMap = new Map(postProfiles.map(p => [p.id, { email: p.email, display_name: p.display_name }]))
 
-    // Return posts with author names (username or email fallback)
+    // Return posts with author names (respecting anonymous flag)
     return (postsData || []).map(post => {
       const profile = profileMap.get(post.user_id)
-      const authorName = profile?.display_name || profile?.email || 'Unknown'
+      const actualAuthorName = profile?.display_name || profile?.email || 'Unknown'
+      
+      // Use "Anonymous" if the post is marked as anonymous, otherwise use actual name
+      const authorName = post.is_anonymous ? 'Anonymous' : actualAuthorName
+      
       return {
-      ...post,
+        ...post,
         authorName,
       }
     })
@@ -76,13 +80,18 @@ export async function getThreads() {
     // Create a map for quick lookup
     const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name }]) || [])
 
-    // Combine threads with usernames/emails
+    // Combine threads with usernames/emails (respecting anonymous flag)
     return threadsData.map(thread => {
       const profile = profileMap.get(thread.user_id)
-      const user_display_name = profile?.display_name || profile?.email || null
+      const actualDisplayName = profile?.display_name || profile?.email || null
+      
+      // Use "Anonymous" if the thread is marked as anonymous, otherwise use actual name
+      const user_display_name = thread.is_anonymous ? 'Anonymous' : actualDisplayName
+      const user_email = thread.is_anonymous ? null : profile?.email || null
+      
       return {
-      ...thread,
-        user_email: profile?.email || null,
+        ...thread,
+        user_email,
         user_display_name
       }
     })

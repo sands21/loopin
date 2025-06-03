@@ -129,34 +129,47 @@ export default function FileUpload({
       {/* Preview */}
       {currentFile && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative bg-gray-50 rounded-xl p-4 border border-gray-200"
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: -10 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="relative bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative w-16 h-16 rounded-lg border border-gray-200 overflow-hidden">
+            <div className="flex items-center space-x-4">
+              <div className="relative w-20 h-20 rounded-2xl border-2 border-gray-200 overflow-hidden shadow-md group">
                 <Image
                   src={currentFile}
                   alt="Uploaded preview"
                   fill
-                  className="object-cover"
-                  sizes="64px"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="80px"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">Image uploaded</p>
-                <p className="text-xs text-gray-500">Ready to post</p>
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <p className="text-sm font-semibold text-gray-900">Image ready</p>
+                </div>
+                <p className="text-xs text-gray-500">Click post to share with others</p>
+                <div className="flex items-center space-x-1 text-xs text-gray-400">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>Optimized & ready</span>
+                </div>
               </div>
             </div>
             
             <motion.button
               onClick={handleRemove}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.1, rotate: 90 }}
               whileTap={{ scale: 0.9 }}
-              className="w-8 h-8 bg-red-100 hover:bg-red-200 rounded-full flex items-center justify-center transition-colors"
+              transition={{ duration: 0.2 }}
+              className="w-10 h-10 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-2xl flex items-center justify-center transition-colors group"
             >
-              <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-red-500 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </motion.button>

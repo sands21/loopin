@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/app/components/ui/button'
 import { Modal } from '@/app/components/ui/modal'
 import FileUpload from '@/app/components/ui/file-upload'
+import { useIdentity } from '@/app/components/providers/identity-provider'
 import { supabase } from '@/lib/supabase/client'
 
 interface CreateThreadProps {
@@ -20,6 +21,7 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { isAnonymousMode } = useIdentity()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +36,7 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
     setError(null)
 
     try {
-      // Insert the thread into the database
+      // Insert the thread into the database with anonymous flag
       const { data, error: threadError } = await supabase
         .from('threads')
         .insert([
@@ -43,10 +45,7 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
             content,
             user_id: userId,
             image_url: imageUrl,
-            is_pinned: false,
-            is_locked: false,
-            view_count: 0,
-            post_count: 0,
+            is_anonymous: isAnonymousMode,
           }
         ])
         .select('id')
@@ -111,7 +110,13 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
               <h2 className="text-2xl font-bold mb-2">Start a new discussion</h2>
               <p className="text-purple-100 mb-4">Share your thoughts with the community</p>
               {userEmail && (
-                <p className="text-sm text-purple-200">Posting as {userEmail}</p>
+                <p className="text-sm text-purple-200">
+                  Posting as {isAnonymousMode ? (
+                    <span className="font-medium">Anonymous</span>
+                  ) : (
+                    <span className="font-medium">{userEmail}</span>
+                  )}
+                </p>
               )}
             </div>
             <motion.button
@@ -198,12 +203,12 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
-                      {userEmail[0]?.toUpperCase()}
+                      {isAnonymousMode ? '?' : userEmail[0]?.toUpperCase()}
                     </span>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">Posting as</p>
-                    <p className="text-sm text-gray-600">{userEmail}</p>
+                    <p className="text-sm text-gray-600">{isAnonymousMode ? 'Anonymous' : userEmail}</p>
                   </div>
                 </div>
               </div>
