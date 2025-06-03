@@ -5,14 +5,19 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import { Thread } from '@/lib/supabase/types'
+import { getThreads } from '@/lib/utils'
 import { Button } from '@/app/components/ui/button'
 import { PageTransition } from '@/app/components/ui/transitions'
 import ThreadList from '@/app/components/threads/thread-list'
 import CreateThread from '@/app/components/threads/create-thread'
 import Link from 'next/link'
 
+type UserWithProfile = User & {
+  display_name?: string | null
+}
+
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserWithProfile | null>(null)
   const [threads, setThreads] = useState<Thread[]>([])
   const [loading, setLoading] = useState(true)
   const [threadsLoading, setThreadsLoading] = useState(true)
@@ -21,62 +26,36 @@ export default function DashboardPage() {
   useEffect(() => {
     async function getUser() {
       const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
-
+      
       if (user) {
-        fetchThreads()
+        // Fetch user's profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single()
+        
+        setUser({
+          ...user,
+          display_name: profile?.display_name
+        })
+        
+        fetchThreadsData()
+      } else {
+        setUser(null)
       }
+      
+      setLoading(false)
     }
     getUser()
   }, [])
 
-  async function fetchThreads() {
+  async function fetchThreadsData() {
     try {
       setThreadsLoading(true)
-      
-      // Get threads first - no joins needed, limit to 5 most recent
-      const { data: threadsData, error } = await supabase
-        .from('threads')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5)
-      
-      if (error) {
-        throw error
-      }
-
-      if (!threadsData) {
-        setThreads([])
-        return
-      }
-
-      // Get unique user IDs
-      const userIds = [...new Set(threadsData.map(thread => thread.user_id))]
-      
-      // Fetch profiles for these user IDs
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .in('id', userIds)
-      
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError)
-        // Still show threads even if we can't get emails
-        setThreads(threadsData.map(thread => ({ ...thread, user_email: null })) as Thread[])
-        return
-      }
-
-      // Create a map for quick lookup
-      const profileMap = new Map(profiles?.map(p => [p.id, p.email]) || [])
-
-      // Combine threads with emails
-      const threadsWithEmail = threadsData.map(thread => ({
-        ...thread,
-        user_email: profileMap.get(thread.user_id) || null
-      })) as Thread[]
-
-      setThreads(threadsWithEmail)
+      const threadsData = await getThreads()
+      // Limit to 5 most recent for dashboard
+      setThreads(threadsData.slice(0, 5))
     } catch (error) {
       console.error('Error fetching threads:', error)
     } finally {
@@ -105,7 +84,7 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-gray-900">Loopin Forum</h1>
             <div className="flex space-x-4 items-center">
               <span className="text-sm text-gray-600">
-                {user?.email}
+                {user?.display_name || user?.email}
               </span>
               <Button
                 variant="danger"
@@ -117,7 +96,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {user && <CreateThread userId={user.id} userEmail={user.email} />}
+          {user && <CreateThread userId={user.id} userEmail={user.display_name || user.email} />}
           
           <div className="bg-white shadow rounded-lg p-6">
             <div className="flex justify-between items-center mb-6">

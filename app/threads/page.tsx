@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { Thread } from '@/lib/supabase/types'
+import { getThreads } from '@/lib/utils'
 import { PageTransition, FadeIn } from '@/app/components/ui/transitions'
 import ThreadList from '@/app/components/threads/thread-list'
 import CreateThread from '@/app/components/threads/create-thread'
@@ -11,8 +12,12 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import type { User } from '@supabase/supabase-js'
 
+type UserWithProfile = User & {
+  display_name?: string | null
+}
+
 export default function ThreadsPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserWithProfile | null>(null)
   const [threads, setThreads] = useState<Thread[]>([])
   const [threadsLoading, setThreadsLoading] = useState(true)
   const router = useRouter()
@@ -20,60 +25,34 @@ export default function ThreadsPage() {
   useEffect(() => {
     async function getUser() {
       const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
+      
+      if (user) {
+        // Fetch user's profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single()
+        
+        setUser({
+          ...user,
+          display_name: profile?.display_name
+        })
+      } else {
+        setUser(null)
+      }
 
       // Always fetch threads, whether user is logged in or not
-      fetchThreads()
+      fetchThreadsData()
     }
     getUser()
   }, [])
 
-  async function fetchThreads() {
+  async function fetchThreadsData() {
     try {
       setThreadsLoading(true)
-      
-      // Get threads first - no joins needed
-      const { data: threadsData, error } = await supabase
-        .from('threads')
-        .select('*')
-        .order('is_pinned', { ascending: false })
-        .order('created_at', { ascending: false })
-      
-      if (error) {
-        throw error
-      }
-
-      if (!threadsData) {
-        setThreads([])
-        return
-      }
-
-      // Get unique user IDs
-      const userIds = [...new Set(threadsData.map(thread => thread.user_id))]
-      
-      // Fetch profiles for these user IDs
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .in('id', userIds)
-      
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError)
-        // Still show threads even if we can't get emails
-        setThreads(threadsData.map(thread => ({ ...thread, user_email: null })) as Thread[])
-        return
-      }
-
-      // Create a map for quick lookup
-      const profileMap = new Map(profiles?.map(p => [p.id, p.email]) || [])
-
-      // Combine threads with emails
-      const threadsWithEmail = threadsData.map(thread => ({
-        ...thread,
-        user_email: profileMap.get(thread.user_id) || null
-      })) as Thread[]
-
-      setThreads(threadsWithEmail)
+      const threadsData = await getThreads()
+      setThreads(threadsData)
     } catch (error) {
       console.error('Error fetching threads:', error)
     } finally {
@@ -106,12 +85,12 @@ export default function ThreadsPage() {
                     <div className="flex items-center space-x-3 bg-gray-50 rounded-xl px-4 py-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                         <span className="text-white font-bold">
-                          {user.email?.[0]?.toUpperCase()}
+                          {(user.display_name || user.email)?.[0]?.toUpperCase()}
                         </span>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900">Signed in as</p>
-                        <p className="text-sm text-gray-600">{user.email}</p>
+                        <p className="text-sm text-gray-600">{user.display_name || user.email}</p>
                       </div>
                     </div>
                   </div>
@@ -134,7 +113,7 @@ export default function ThreadsPage() {
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Create Thread Section */}
-          {user && <CreateThread userId={user.id} userEmail={user.email} />}
+          {user && <CreateThread userId={user.id} userEmail={user.display_name || user.email} />}
           
           {/* Stats Section */}
           <FadeIn delay={0.2}>

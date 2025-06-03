@@ -31,7 +31,7 @@ export async function getPosts(threadId: string) {
       const profile = profileMap.get(post.user_id)
       const authorName = profile?.display_name || profile?.email || 'Unknown'
       return {
-        ...post,
+      ...post,
         authorName,
       }
     })
@@ -81,7 +81,7 @@ export async function getThreads() {
       const profile = profileMap.get(thread.user_id)
       const user_display_name = profile?.display_name || profile?.email || null
       return {
-        ...thread,
+      ...thread,
         user_email: profile?.email || null,
         user_display_name
       }

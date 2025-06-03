@@ -168,10 +168,10 @@ export default function ThreadList({ threads, loading }: ThreadListProps) {
                           <div className="flex items-center space-x-1">
                             <div className="w-4 h-4 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center">
                               <span className="text-white text-xs font-medium">
-                                {thread.user_email[0]?.toUpperCase()}
+                                {(thread.user_display_name || thread.user_email)[0]?.toUpperCase()}
                               </span>
                             </div>
-                            <span>{thread.user_email}</span>
+                            <span>{thread.user_display_name || thread.user_email}</span>
                           </div>
                         )}
                       </div>

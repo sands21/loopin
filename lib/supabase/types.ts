@@ -14,6 +14,8 @@ export interface Thread {
   view_count: number
   post_count: number
   user_email?: string
+  user_display_name?: string | null
+  display_name?: string | null
   last_post_at: string | null
 }
 
