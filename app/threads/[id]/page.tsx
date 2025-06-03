@@ -3,6 +3,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase/client'
 import { Thread } from '@/lib/supabase/types'
 import { getPosts } from '@/lib/utils'
@@ -12,9 +13,11 @@ import { PageTransition, FadeIn } from '@/app/components/ui/transitions'
 import { useUser } from '@/app/hooks/useUser'
 import ThreadModeration from '@/app/components/threads/thread-moderation'
 import CommentList from '@/app/components/threads/comment-list'
+import FileUpload from '@/app/components/ui/file-upload'
 
 interface ThreadWithAuthor extends Thread {
   authorName: string
+  image_url?: string | null
 }
 
 interface PostWithAuthor {
@@ -33,6 +36,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
   const [thread, setThread] = useState<ThreadWithAuthor | null>(null)
   const [posts, setPosts] = useState<PostWithAuthor[]>([])
   const [newPostContent, setNewPostContent] = useState('')
+  const [newPostImageUrl, setNewPostImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [postLoading, setPostLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -78,6 +82,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         setThread({
           ...threadData,
           authorName: threadProfile?.display_name || threadProfile?.email || 'Unknown',
+          image_url: threadData.image_url,
         })
 
         // Fetch posts using the utility function
@@ -110,6 +115,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
             thread_id: threadId,
             content: newPostContent,
             user_id: currentUser.id,
+            image_url: newPostImageUrl,
             is_solution: false
           }
         ])
@@ -129,6 +135,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
       // Clear the input and refresh the posts
       setNewPostContent('')
+      setNewPostImageUrl(null)
       
       // Refetch the posts using the utility function
       const postsData = await getPosts(threadId)
@@ -140,6 +147,14 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
     } finally {
       setPostLoading(false)
     }
+  }
+
+  const handlePostFileUpload = (url: string) => {
+    setNewPostImageUrl(url)
+  }
+
+  const handlePostFileRemove = () => {
+    setNewPostImageUrl(null)
   }
 
   const handleThreadUpdate = (updatedThread: Thread) => {
@@ -291,6 +306,25 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                     {thread.content}
                   </div>
 
+                  {/* Thread Image Display */}
+                  {thread.image_url && (
+                    <div className="mt-6">
+                      <div 
+                        className="relative max-w-full h-auto rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+                        onClick={() => thread.image_url && window.open(thread.image_url, '_blank')}
+                      >
+                        <Image
+                          src={thread.image_url}
+                          alt="Thread attachment"
+                          width={800}
+                          height={600}
+                          className="w-full h-auto object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Moderation Controls */}
                   {canModerate && thread && (
                     <ThreadModeration thread={thread} onUpdate={handleThreadUpdate} />
@@ -341,6 +375,18 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                       rows={6}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-700"
                       disabled={postLoading}
+                    />
+                  </div>
+
+                  {/* Image Upload for Comments */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Attach Image (Optional)
+                    </label>
+                    <FileUpload
+                      onFileUpload={handlePostFileUpload}
+                      onFileRemove={handlePostFileRemove}
+                      currentFile={newPostImageUrl}
                     />
                   </div>
                   

@@ -1,5 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 
 interface PostWithAuthor {
@@ -54,11 +55,16 @@ export default function CommentItem({ post, index }: CommentItemProps) {
           {/* Image Display */}
           {post.image_url && (
             <div className="mt-4">
-              <img
-                src={post.image_url}
-                alt="Attached image"
-                className="max-w-full h-auto rounded-lg border border-gray-200 shadow-sm"
-              />
+              <div className="relative max-w-full h-auto rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <Image
+                  src={post.image_url}
+                  alt="Attached image"
+                  width={600}
+                  height={400}
+                  className="w-full h-auto object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
             </div>
           )}
         </div>

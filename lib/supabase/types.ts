@@ -6,6 +6,7 @@ export interface Thread {
   title: string
   content: string
   user_id: string
+  image_url?: string | null
   created_at: string
   updated_at: string
   category?: string
@@ -25,6 +26,8 @@ export interface Post {
   thread_id: string
   content: string
   user_id: string
+  is_anonymous: boolean
+  image_url?: string | null
   created_at: string
   updated_at: string
   is_solution: boolean

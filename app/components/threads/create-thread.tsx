@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button } from '@/app/components/ui/button'
 import { Modal } from '@/app/components/ui/modal'
+import FileUpload from '@/app/components/ui/file-upload'
 import { supabase } from '@/lib/supabase/client'
 
 interface CreateThreadProps {
@@ -15,6 +16,7 @@ interface CreateThreadProps {
 export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -40,6 +42,7 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
             title,
             content,
             user_id: userId,
+            image_url: imageUrl,
             is_pinned: false,
             is_locked: false,
             view_count: 0,
@@ -54,6 +57,7 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
       // Reset the form and close modal
       setTitle('')
       setContent('')
+      setImageUrl(null)
       setError(null)
       setIsModalOpen(false)
       
@@ -76,7 +80,16 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
     setIsModalOpen(false)
     setTitle('')
     setContent('')
+    setImageUrl(null)
     setError(null)
+  }
+
+  const handleFileUpload = (url: string) => {
+    setImageUrl(url)
+  }
+
+  const handleFileRemove = () => {
+    setImageUrl(null)
   }
 
   return (
@@ -165,6 +178,18 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
                 rows={6}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
                 disabled={loading}
+              />
+            </div>
+
+            {/* Image Upload Section */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Attach Image (Optional)
+              </label>
+              <FileUpload
+                onFileUpload={handleFileUpload}
+                onFileRemove={handleFileRemove}
+                currentFile={imageUrl}
               />
             </div>
 

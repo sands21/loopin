@@ -26,7 +26,7 @@ export default function DashboardPage() {
   useEffect(() => {
     async function getUser() {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (user) {
         // Fetch user's profile
         const { data: profile } = await supabase

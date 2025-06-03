@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Thread } from '@/lib/supabase/types'
 import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
@@ -145,6 +146,21 @@ export default function ThreadList({ threads, loading }: ThreadListProps) {
                     <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
                       {thread.content}
                     </p>
+
+                    {/* Thread Image Preview */}
+                    {thread.image_url && (
+                      <div className="mb-4">
+                        <div className="relative w-full max-w-md h-32 rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                          <Image
+                            src={thread.image_url}
+                            alt="Thread attachment"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Thread Metadata */}
                     <div className="flex items-center justify-between">
