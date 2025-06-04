@@ -96,4 +96,14 @@ export async function getThreads() {
   } catch (error) {
     throw error
   }
+}
+
+export function getSiteUrl(): string {
+  // For server-side rendering, use the environment variable
+  if (typeof window === 'undefined') {
+    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  }
+  
+  // For client-side, use environment variable or fallback to current origin
+  return process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
 } 

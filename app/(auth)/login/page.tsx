@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase/client'
+import { getSiteUrl } from '@/lib/utils'
 import { 
   PageTransition, 
   FadeIn, 
@@ -54,10 +55,12 @@ export default function LoginPage() {
     setError('')
 
     try {
+      const siteUrl = getSiteUrl()
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${siteUrl}/auth/callback`
         }
       })
 

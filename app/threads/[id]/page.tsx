@@ -229,17 +229,17 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         {/* Back Navigation */}
         <div className="bg-white border-b border-gray-200 shadow-sm">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-            <motion.button
-              onClick={() => router.back()}
+              <motion.button
+                onClick={() => router.back()}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
               whileHover={{ x: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
+                whileTap={{ scale: 0.98 }}
+              >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
               <span>Back to discussions</span>
-            </motion.button>
+              </motion.button>
           </div>
         </div>
 
@@ -247,7 +247,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Main Content */}
             <div className="lg:col-span-3 space-y-4 sm:space-y-6">
-              {/* Thread Header */}
+          {/* Thread Header */}
               <FadeIn>
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="p-4 sm:p-6 lg:p-8">
@@ -261,14 +261,14 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                       {thread.is_locked && (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                           🔒 <span className="ml-1 hidden sm:inline">Locked</span>
-                        </span>
+                    </span>
                       )}
-                    </div>
+                </div>
 
                     {/* Thread Title */}
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-                      {thread.title}
-                    </h1>
+                        {thread.title}
+                      </h1>
 
                     {/* Thread Content */}
                     <div className="prose prose-sm sm:prose max-w-none mb-4 sm:mb-6">
@@ -353,7 +353,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                           <span className="font-medium">
                             {posts.length} {posts.length === 1 ? 'reply' : 'replies'}
                           </span>
-                        </div>
+                    </div>
                         <div className="flex items-center space-x-1">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -362,42 +362,42 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                           <span className="font-medium">{thread.view_count} views</span>
                         </div>
                       </div>
-                    </div>
-                  </div>
                 </div>
-              </FadeIn>
+              </div>
+            </div>
+          </FadeIn>
 
               {/* Comments Section */}
-              <FadeIn delay={0.2}>
+          <FadeIn delay={0.2}>
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
-                  <CommentList posts={posts} />
-                </div>
-              </FadeIn>
+              <CommentList posts={posts} />
+            </div>
+          </FadeIn>
 
-              {/* Reply Form */}
+          {/* Reply Form */}
               {currentUser && !thread.is_locked ? (
-                <FadeIn delay={0.3}>
+            <FadeIn delay={0.3}>
                   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
                     <div className="flex items-center space-x-3 mb-4 sm:mb-6">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                         <span className="text-white text-sm sm:text-base font-medium">
                           {(profile?.display_name || currentUser.email)?.[0]?.toUpperCase()}
-                        </span>
-                      </div>
-                      <div>
+                    </span>
+                  </div>
+                  <div>
                         <p className="text-sm sm:text-base font-semibold text-gray-900">Post a reply</p>
                         <p className="text-xs sm:text-sm text-gray-500">
                           Replying as {isAnonymousMode ? 'Anonymous' : (profile?.display_name || currentUser.email)}
                         </p>
-                      </div>
-                    </div>
-
+                  </div>
+                </div>
+                
                     <form onSubmit={handlePostSubmit} className="space-y-4">
-                      <div>
-                        <textarea
-                          value={newPostContent}
-                          onChange={(e) => setNewPostContent(e.target.value)}
-                          placeholder="Share your thoughts on this discussion..."
+                  <div>
+                    <textarea
+                      value={newPostContent}
+                      onChange={(e) => setNewPostContent(e.target.value)}
+                      placeholder="Share your thoughts on this discussion..."
                           className="w-full p-3 sm:p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm sm:text-base"
                           rows={4}
                           required
@@ -413,9 +413,9 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                           onFileUpload={handlePostFileUpload}
                           onFileRemove={handlePostFileRemove}
                           currentFile={newPostImageUrl}
-                        />
-                      </div>
-
+                    />
+                  </div>
+                  
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                         <div className="text-xs sm:text-sm text-gray-500">
                           {isAnonymousMode ? (
@@ -431,28 +431,28 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                           )}
                         </div>
                         
-                        <motion.button
-                          type="submit"
-                          disabled={postLoading || !newPostContent.trim()}
+                    <motion.button
+                      type="submit"
+                      disabled={postLoading || !newPostContent.trim()}
                           className="btn btn-primary w-full sm:w-auto text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                        >
-                          {postLoading ? (
+                    >
+                      {postLoading ? (
                             <span className="flex items-center justify-center">
                               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                               Posting...
                             </span>
-                          ) : (
+                      ) : (
                             'Post Reply'
-                          )}
-                        </motion.button>
-                      </div>
-                    </form>
+                      )}
+                    </motion.button>
                   </div>
-                </FadeIn>
+                </form>
+              </div>
+            </FadeIn>
               ) : !currentUser ? (
-                <FadeIn delay={0.3}>
+            <FadeIn delay={0.3}>
                   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
                     <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                       <svg className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -477,8 +477,8 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                     <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                       <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                    </div>
+                  </svg>
+                </div>
                     <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">Thread Locked</h3>
                     <p className="text-gray-500 text-sm sm:text-base">This thread has been locked and no longer accepts new replies.</p>
                   </div>
@@ -492,9 +492,9 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
               {canModerate && (
                 <FadeIn delay={0.4}>
                   <ThreadModeration thread={thread} onUpdate={handleThreadUpdate} />
-                </FadeIn>
-              )}
-
+            </FadeIn>
+          )}
+          
               {/* Thread Stats */}
               <FadeIn delay={0.5}>
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
@@ -528,7 +528,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                     )}
                   </div>
                 </div>
-              </FadeIn>
+            </FadeIn>
             </div>
           </div>
         </div>

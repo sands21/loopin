@@ -152,8 +152,8 @@ export default function CommentItem({ post, index }: CommentItemProps) {
                   transition={{ duration: 0.2 }}
                 >
                   <Image
-                    src={post.image_url}
-                    alt="Attached image"
+                src={post.image_url}
+                alt="Attached image"
                     width={320}
                     height={240}
                     className="w-full h-auto max-h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
@@ -180,7 +180,7 @@ export default function CommentItem({ post, index }: CommentItemProps) {
                     <span>Click to enlarge</span>
                   </span>
                 </div>
-              </div>
+            </div>
             </motion.div>
           )}
         </div>

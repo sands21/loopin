@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase/client'
+import { getSiteUrl } from '@/lib/utils'
 import { 
   PageTransition, 
   FadeIn, 
@@ -53,10 +54,12 @@ export default function RegisterPage() {
     setError('')
 
     try {
+      const siteUrl = getSiteUrl()
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${siteUrl}/auth/callback`
         }
       })
 
