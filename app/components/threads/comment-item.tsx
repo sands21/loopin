@@ -42,8 +42,8 @@ export default function CommentItem({ post, index }: CommentItemProps) {
         setCopySuccess(false)
         setShowToast(false)
       }, 2000)
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error)
+    } catch {
+      // Copy failed silently for better UX
     }
   }
 
@@ -85,9 +85,9 @@ export default function CommentItem({ post, index }: CommentItemProps) {
           <div className="flex items-center justify-between mb-3">
             <span className="font-semibold text-gray-900">{displayName}</span>
             <div className="flex items-center space-x-2">
-              <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              </span>
+            <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+            </span>
               
               {/* Export as Microblog Button */}
               <div className="relative group">
@@ -145,10 +145,10 @@ export default function CommentItem({ post, index }: CommentItemProps) {
             >
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 border border-gray-200 shadow-sm">
                 <motion.div 
-                  className="relative w-fit max-w-md mx-auto rounded-lg overflow-hidden cursor-pointer group shadow-md hover:shadow-lg transition-shadow duration-300"
+                  className="relative w-fit max-w-sm rounded-lg overflow-hidden cursor-pointer group shadow-md hover:shadow-lg transition-shadow duration-300"
                   onClick={() => window.open(post.image_url!, '_blank')}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.2 }}
                 >
                   <Image
@@ -156,23 +156,23 @@ export default function CommentItem({ post, index }: CommentItemProps) {
                     alt="Attached image"
                     width={320}
                     height={240}
-                    className="max-w-md max-h-64 w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-auto max-h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 768px) 80vw, (max-width: 1200px) 40vw, 320px"
                   />
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 rounded-lg" />
                   {/* Zoom Icon */}
                   <motion.div 
-                    className="absolute top-2 right-2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm"
                     whileHover={{ scale: 1.1 }}
                   >
-                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                     </svg>
                   </motion.div>
                 </motion.div>
                 {/* Image Caption */}
-                <div className="mt-2 flex items-center justify-center text-xs text-gray-400">
+                <div className="mt-2 flex items-center justify-center text-xs text-gray-500">
                   <span className="flex items-center space-x-1">
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

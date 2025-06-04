@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Loopin - Discussion Forum MVP
 
-## Getting Started
+A modern, full-featured discussion forum built with Next.js 15, Supabase, TypeScript, and Tailwind CSS. Features real-time discussions, anonymous posting, image uploads, and smooth animations.
 
-First, run the development server:
+## �� Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### ✅ **Complete MVP Implementation**
+
+- **🔐 Authentication System**
+
+  - Email/password registration and login
+  - OAuth login (GitHub & Google)
+  - Session management with middleware protection
+  - User profiles with usernames and bios
+
+- **💬 Discussion Threads**
+
+  - Create and browse discussion threads
+  - Rich text content with image attachments
+  - Thread moderation (pin, lock, delete)
+  - Real-time view counts and statistics
+
+- **📝 Comments & Replies**
+
+  - Threaded comment system
+  - Image attachments in comments
+  - Anonymous vs verified posting toggle
+  - Real-time comment updates
+
+- **🎭 Anonymous Mode**
+
+  - Global anonymous toggle switch
+  - Per-post anonymous/verified control
+  - Privacy-first design
+
+- **📤 Microblog Export**
+
+  - One-click export comments to clipboard
+  - Formatted for external sharing
+  - Toast notifications for user feedback
+
+- **🎨 Modern UI/UX**
+
+  - Responsive design with Tailwind CSS
+  - Smooth animations with Framer Motion
+  - Glass morphism and gradient effects
+  - Dark mode optimized color schemes
+
+- **📁 File Upload System**
+  - Secure Supabase Storage integration
+  - Image compression and optimization
+  - Drag-and-drop upload interface
+  - File preview and management
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, RLS)
+- **Animations**: Framer Motion
+- **State Management**: React Context + SWR
+- **Styling**: Tailwind CSS with custom design tokens
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏗️ Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### **Core Tables**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **`profiles`** - User profiles, usernames, bios, and statistics
+- **`threads`** - Discussion threads with image support and anonymity options
+- **`posts`** - Comments/replies with image attachments and anonymous posting
+- **`uploads`** - Secure file storage bucket for image attachments
 
-## Learn More
+## 🔒 Security Features
 
-To learn more about Next.js, take a look at the following resources:
+- Row-Level Security (RLS) policies on all database tables
+- Secure file upload validation and type checking
+- Input sanitization and validation throughout
+- Protected API routes with authentication
+- Session-based authentication with middleware protection
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ Key Features Highlights
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **User Experience**
 
-## Deploy on Vercel
+- **Responsive Design**: Works seamlessly on mobile, tablet, and desktop
+- **Smooth Animations**: Framer Motion powered transitions and interactions
+- **Real-time Updates**: Live comment updates and statistics
+- **Intuitive Navigation**: Clean, modern interface with clear information hierarchy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **Privacy & Anonymity**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Anonymous Mode**: Global toggle for anonymous posting
+- **Per-post Control**: Choose verified or anonymous for each post
+- **Privacy Preserving**: No tracking of anonymous posts to users
+
+### **Content Management**
+
+- **Rich Media Support**: Image uploads in threads and comments
+- **Secure Storage**: All files stored securely with proper validation
+- **Export Functionality**: Export comments for sharing on other platforms
+- **Moderation Tools**: Pin, lock, and manage discussion threads
+
+### **Technical Excellence**
+
+- **Type Safety**: Full TypeScript implementation
+- **Performance Optimized**: Efficient queries and optimized bundle sizes
+- **Security First**: Comprehensive security measures throughout
+- **Production Ready**: Battle-tested and deployment ready

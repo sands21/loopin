@@ -35,12 +35,11 @@ export async function getPosts(threadId: string) {
       const authorName = post.is_anonymous ? 'Anonymous' : actualAuthorName
       
       return {
-        ...post,
+      ...post,
         authorName,
       }
     })
   } catch (error) {
-    console.error('Error fetching posts:', error)
     throw error
   }
 }
@@ -72,7 +71,6 @@ export async function getThreads() {
       .in('id', userIds)
     
     if (profilesError) {
-      console.error('Error fetching profiles:', profilesError)
       // Still show threads even if we can't get emails
       return threadsData.map(thread => ({ ...thread, user_email: null }))
     }
@@ -90,13 +88,12 @@ export async function getThreads() {
       const user_email = thread.is_anonymous ? null : profile?.email || null
       
       return {
-        ...thread,
+      ...thread,
         user_email,
         user_display_name
       }
     })
   } catch (error) {
-    console.error('Error fetching threads:', error)
     throw error
   }
 } 

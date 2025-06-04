@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/app/hooks/useUser";
@@ -26,46 +27,23 @@ export function Header() {
     return displayName[0]?.toUpperCase() || 'U';
   };
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/threads", label: "Threads" },
-  ];
-
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-              <span className="text-white font-bold text-xl">L</span>
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="Loopin Logo"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Loopin</span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="relative text-gray-600 hover:text-gray-900 transition-colors font-medium"
-              >
-                <motion.span
-                  whileHover={{ scale: 1.05 }}
-                  className="relative py-2"
-                >
-                  {link.label}
-                  <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
-                </motion.span>
-              </Link>
-            ))}
-          </nav>
 
           {/* Desktop User Menu */}
           <div className="hidden md:flex items-center space-x-6">
@@ -162,17 +140,17 @@ export function Header() {
             className="md:hidden bg-white border-t border-gray-200"
           >
             <div className="px-4 py-4 space-y-4">
-              {/* Mobile Navigation Links */}
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block text-gray-600 hover:text-gray-900 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {/* Anonymous Toggle for Mobile - Only show if user is logged in */}
+              {user && (
+                <div className="py-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      Posting Mode
+                    </span>
+                    <AnonymousToggle />
+                  </div>
+                </div>
+              )}
 
               {/* Mobile User Menu */}
               <div className="pt-4 border-t border-gray-200">
@@ -182,64 +160,55 @@ export function Header() {
                     <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
                   </div>
                 ) : user ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-medium">
                           {getUserInitial()}
                         </span>
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        {getUserDisplayName()}
-                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {getUserDisplayName()}
+                        </p>
+                        <p className="text-xs text-gray-500">Signed in</p>
+                      </div>
                     </div>
                     <div className="flex flex-col space-y-2">
                       <Link
                         href="/dashboard"
-                        className="relative text-gray-700 hover:text-gray-900 transition-colors text-sm font-semibold px-4 py-2 block text-center group"
+                        className="text-gray-700 hover:text-gray-900 transition-colors text-sm font-medium px-4 py-3 bg-gray-50 rounded-lg hover:bg-gray-100 text-center"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        <motion.span
-                          whileHover={{ scale: 1.05 }}
-                          className="relative py-2"
-                        >
-                          Dashboard
-                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
-                        </motion.span>
+                        Dashboard
                       </Link>
                       <Link
                         href="/profile"
-                        className="relative text-gray-700 hover:text-gray-900 transition-colors text-sm font-semibold px-4 py-2 block text-center group"
+                        className="text-gray-700 hover:text-gray-900 transition-colors text-sm font-medium px-4 py-3 bg-gray-50 rounded-lg hover:bg-gray-100 text-center"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        <motion.span
-                          whileHover={{ scale: 1.05 }}
-                          className="relative py-2"
-                        >
-                          Profile
-                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
-                        </motion.span>
+                        Profile
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="btn btn-ghost text-sm w-full"
+                        className="text-red-600 hover:text-red-700 text-sm font-medium px-4 py-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
                       >
                         Logout
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col space-y-2">
+                  <div className="flex flex-col space-y-3">
                     <Link
                       href="/login"
-                      className="text-gray-700 hover:text-gray-900 text-sm font-medium px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors text-center"
+                      className="text-gray-700 hover:text-gray-900 text-sm font-medium px-4 py-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors text-center"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
                       href="/register"
-                      className="btn btn-primary text-sm w-full"
+                      className="btn btn-primary text-sm font-medium px-4 py-3 text-center"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign Up

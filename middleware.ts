@@ -32,14 +32,12 @@ export async function middleware(req: NextRequest) {
   )
 
   // This will refresh session if expired - required for Server Components
-  await supabase.auth.getUser()
-
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  // Redirect to login if accessing protected routes without session
-  if (!session && (req.nextUrl.pathname.startsWith('/dashboard') || req.nextUrl.pathname.startsWith('/threads'))) {
+  // Redirect to login if accessing protected routes without authenticated user
+  if (!user && (req.nextUrl.pathname.startsWith('/dashboard') || req.nextUrl.pathname.startsWith('/threads'))) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 

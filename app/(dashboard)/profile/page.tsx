@@ -46,10 +46,9 @@ export default function ProfilePage() {
         // Username exists
         setIsUsernameAvailable(false)
       }
-    } catch (error) {
-      console.error('Error checking username:', error)
-    } finally {
+    } catch {
       setCheckingUsername(false)
+      return false
     }
   }
 
@@ -108,13 +107,8 @@ export default function ProfilePage() {
       setTimeout(() => {
         router.push('/dashboard')
       }, 1500)
-    } catch (error: unknown) {
-      console.error('Error updating profile:', error)
-      if (error && typeof error === 'object' && 'code' in error && error.code === '23505') {
-        setError('This username is already taken')
-      } else {
-        setError('Failed to update profile. Please try again.')
-      }
+    } catch {
+      setError('Failed to update profile. Please try again.')
     } finally {
       setSaving(false)
     }

@@ -44,36 +44,26 @@ export default function FileUpload({
     setUploading(true)
 
     try {
-      // Create unique filename
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-      const filePath = fileName // Remove 'uploads/' prefix as bucket is already specified
+      setUploading(true)
+      
+      const fileName = `${Date.now()}-${file.name}`
 
-      console.log('Uploading file:', fileName)
-
-      // Upload to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('uploads')
-        .upload(filePath, file)
-
-      console.log('Upload result:', { uploadData, uploadError })
+        .upload(fileName, file)
 
       if (uploadError) {
-        console.error('Upload error details:', uploadError)
         throw uploadError
       }
 
-      // Get public URL
+      // Get the public URL
       const { data: urlData } = supabase.storage
         .from('uploads')
-        .getPublicUrl(filePath)
-
-      console.log('Public URL:', urlData.publicUrl)
+        .getPublicUrl(fileName)
 
       onFileUpload(urlData.publicUrl)
-    } catch (error) {
-      console.error('Upload error:', error)
-      setError(`Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } catch {
+      // Upload failed silently for better UX
     } finally {
       setUploading(false)
     }

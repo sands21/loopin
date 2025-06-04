@@ -297,38 +297,142 @@ export default function Home() {
           </ScrollScaleIn>
         )}
 
-        {/* Stats Section with scroll animation */}
+        {/* Platform Personality Section with scroll animation */}
         <ScrollFadeIn>
-          <div className="py-16 bg-gray-50">
+          <div className="py-16 bg-gradient-to-br from-gray-50 via-white to-purple-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <ScrollSlideIn>
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                    What Makes Us Different
+                  </h2>
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    We&apos;re not your typical forum. Here&apos;s what you can expect from the Loopin experience.
+                  </p>
+                </div>
+              </ScrollSlideIn>
+
               <ScrollStaggerContainer>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
                   <StaggerItem>
-                    <div>
-                      <div className="text-4xl font-bold text-purple-600 mb-2">1K+</div>
-                      <div className="text-gray-600">Active Users</div>
+                    <div className="group relative h-full">
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur opacity-15 group-hover:opacity-25 transition-opacity" />
+                      <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all border border-gray-100 h-full flex flex-col">
+                        <div className="flex items-start space-x-4 flex-grow">
+                          <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                          </div>
+                          <div className="flex-grow">
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">No Algorithm Drama</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                              Your posts aren&apos;t fighting for attention in a rigged feed. Every thread gets seen, every voice gets heard. It&apos;s refreshingly... human.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </StaggerItem>
+
                   <StaggerItem>
-                    <div>
-                      <div className="text-4xl font-bold text-blue-600 mb-2">5K+</div>
-                      <div className="text-gray-600">Discussions</div>
+                    <div className="group relative h-full">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur opacity-15 group-hover:opacity-25 transition-opacity" />
+                      <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all border border-gray-100 h-full flex flex-col">
+                        <div className="flex items-start space-x-4 flex-grow">
+                          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div className="flex-grow">
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">Perfectly Imperfect</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                              We embrace the messy, unpolished thoughts. Those 3am shower thoughts? That controversial opinion? Bring it on. Growth happens in the grey areas.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </StaggerItem>
+
                   <StaggerItem>
-                    <div>
-                      <div className="text-4xl font-bold text-green-600 mb-2">10K+</div>
-                      <div className="text-gray-600">Messages</div>
+                    <div className="group relative h-full">
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl blur opacity-15 group-hover:opacity-25 transition-opacity" />
+                      <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all border border-gray-100 h-full flex flex-col">
+                        <div className="flex items-start space-x-4 flex-grow">
+                          <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                          </div>
+                          <div className="flex-grow">
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">Built by Humans</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                              No corporate overlords, no data harvesting, no dark patterns. Just a simple place to connect, built by someone who missed the early internet vibes.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </StaggerItem>
+
                   <StaggerItem>
-                    <div>
-                      <div className="text-4xl font-bold text-orange-600 mb-2">99%</div>
-                      <div className="text-gray-600">Uptime</div>
+                    <div className="group relative h-full">
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl blur opacity-15 group-hover:opacity-25 transition-opacity" />
+                      <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all border border-gray-100 h-full flex flex-col">
+                        <div className="flex items-start space-x-4 flex-grow">
+                          <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+                          <div className="flex-grow">
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">Chaos Welcome</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                              Sometimes the best conversations start with &ldquo;This might be stupid, but...&rdquo; We&apos;re here for it. The weird, the wonderful, the wildly off-topic.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </StaggerItem>
                 </div>
               </ScrollStaggerContainer>
+
+              {/* Fun Community Stats */}
+              <ScrollSlideIn>
+                <div className="mt-16 text-center">
+                  <div className="relative max-w-4xl mx-auto">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 to-blue-600/5 rounded-3xl blur-xl" />
+                    <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+                        <div className="group">
+                          <div className="text-2xl font-bold text-purple-600 mb-2 group-hover:scale-110 transition-transform">🎭</div>
+                          <div className="text-sm font-medium text-gray-900">Anonymous Mode</div>
+                          <div className="text-xs text-gray-500">For when you need to be real</div>
+                        </div>
+                        <div className="group">
+                          <div className="text-2xl font-bold text-blue-600 mb-2 group-hover:scale-110 transition-transform">🚫</div>
+                          <div className="text-sm font-medium text-gray-900">Zero Tracking</div>
+                          <div className="text-xs text-gray-500">Your data stays yours</div>
+                        </div>
+                        <div className="group">
+                          <div className="text-2xl font-bold text-green-600 mb-2 group-hover:scale-110 transition-transform">💡</div>
+                          <div className="text-sm font-medium text-gray-900">Open Source Spirit</div>
+                          <div className="text-xs text-gray-500">Transparency first</div>
+                        </div>
+                      </div>
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <p className="text-sm text-gray-600 italic">
+                          &ldquo;Finally, a place where I can share my half-baked theories without judgment.&rdquo;
+                        </p>
+                        <p className="text-xs text-gray-400 mt-2">- Literally every user (probably)</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ScrollSlideIn>
             </div>
           </div>
         </ScrollFadeIn>

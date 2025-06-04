@@ -28,22 +28,23 @@ export function useUser(): UseUserReturn {
   useEffect(() => {
     // Get initial session
     async function getInitialSession() {
+      const { data: { user } } = await supabase.auth.getUser();
       const { data: { session } } = await supabase.auth.getSession();
       
       let profile: Profile | null = null;
-      if (session?.user) {
+      if (user) {
         // Fetch user profile with role
         const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
+          .eq('id', user.id)
           .single();
         
         profile = profileData;
       }
       
       setAuthState({
-        user: session?.user ?? null,
+        user: user,
         session: session,
         profile: profile,
         isLoading: false,

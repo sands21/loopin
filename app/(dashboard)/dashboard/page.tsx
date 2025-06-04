@@ -56,8 +56,8 @@ export default function DashboardPage() {
       const threadsData = await getThreads()
       // Limit to 5 most recent for dashboard
       setThreads(threadsData.slice(0, 5))
-    } catch (error) {
-      console.error('Error fetching threads:', error)
+    } catch {
+      // Error handled silently for better UX
     } finally {
       setThreadsLoading(false)
     }

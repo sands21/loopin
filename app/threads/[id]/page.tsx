@@ -90,8 +90,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         // Fetch posts using the utility function
         const postsData = await getPosts(threadId)
         setPosts(postsData)
-      } catch (error) {
-        console.error('Error fetching thread:', error)
+      } catch {
         setError('Failed to load thread data.')
       } finally {
         setLoading(false)
@@ -144,8 +143,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
       const postsData = await getPosts(threadId)
       setPosts(postsData)
 
-    } catch (error) {
-      console.error('Error posting reply:', error)
+    } catch {
       setError('Failed to post your reply. Please try again.')
     } finally {
       setPostLoading(false)
@@ -166,7 +164,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -181,19 +179,19 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center p-8 bg-white rounded-2xl shadow-lg border border-red-200"
+          className="text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg border border-red-200 max-w-md w-full"
         >
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-7 h-7 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Error</h3>
-          <p className="text-red-600">{error}</p>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Error</h3>
+          <p className="text-red-600 text-sm sm:text-base">{error}</p>
         </motion.div>
       </div>
     )
@@ -201,19 +199,25 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
   if (!thread) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center p-8 bg-white rounded-2xl shadow-lg"
+          className="text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg border border-gray-200 max-w-md w-full"
         >
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-7 h-7 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Thread Not Found</h3>
-          <p className="text-gray-600">The thread you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Thread Not Found</h3>
+          <p className="text-gray-500 text-sm sm:text-base mb-4">The thread you&apos;re looking for doesn&apos;t exist.</p>
+          <button
+            onClick={() => router.push('/threads')}
+            className="btn btn-primary w-full text-sm sm:text-base"
+          >
+            Back to Threads
+          </button>
         </motion.div>
       </div>
     )
@@ -222,308 +226,311 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
       <PageTransition>
-        {/* Header with Back Button */}
+        {/* Back Navigation */}
         <div className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <FadeIn>
-              <motion.button
-                onClick={() => router.back()}
-                className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition-colors group"
-                whileHover={{ x: -4 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <svg className="w-5 h-5 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                <span className="font-medium">Back to discussions</span>
-              </motion.button>
-            </FadeIn>
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <motion.button
+              onClick={() => router.back()}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
+              whileHover={{ x: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span>Back to discussions</span>
+            </motion.button>
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Thread Header */}
-          <FadeIn delay={0.1}>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-              <div className="flex items-start space-x-6">
-                {/* Thread Avatar */}
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-2xl">
-                      {thread.title[0]?.toUpperCase() || 'T'}
-                    </span>
-                  </div>
-                </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-3 space-y-4 sm:space-y-6">
+              {/* Thread Header */}
+              <FadeIn>
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="p-4 sm:p-6 lg:p-8">
+                    {/* Thread Badges */}
+                    <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+                      {thread.is_pinned && (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          📌 <span className="ml-1 hidden sm:inline">Pinned</span>
+                        </span>
+                      )}
+                      {thread.is_locked && (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          🔒 <span className="ml-1 hidden sm:inline">Locked</span>
+                        </span>
+                      )}
+                    </div>
 
-                {/* Thread Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
-                        {thread.title}
-                      </h1>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-medium">
-                              {thread.authorName[0]?.toUpperCase()}
+                    {/* Thread Title */}
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
+                      {thread.title}
+                    </h1>
+
+                    {/* Thread Content */}
+                    <div className="prose prose-sm sm:prose max-w-none mb-4 sm:mb-6">
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
+                        {thread.content}
+                      </p>
+                    </div>
+
+                    {/* Thread Image - Now inline with content */}
+                    {thread.image_url && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="mb-4 sm:mb-6"
+                      >
+                        <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 border border-gray-200 shadow-sm">
+                          <motion.div 
+                            className="relative w-fit max-w-2xl mx-auto rounded-lg overflow-hidden cursor-pointer group shadow-md hover:shadow-lg transition-shadow duration-300"
+                            onClick={() => window.open(thread.image_url!, '_blank')}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Image
+                              src={thread.image_url}
+                              alt="Thread image"
+                              width={640}
+                              height={480}
+                              className="max-w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                              sizes="(max-width: 768px) 90vw, (max-width: 1200px) 60vw, 640px"
+                              priority
+                            />
+                            {/* Overlay */}
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                            {/* Zoom Icon */}
+                            <motion.div 
+                              className="absolute top-3 right-3 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              whileHover={{ scale: 1.1 }}
+                            >
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </motion.div>
+                          </motion.div>
+                          {/* Image Caption */}
+                          <div className="mt-3 flex items-center justify-center text-sm text-gray-500">
+                            <span className="flex items-center space-x-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              <span>Click to view full size</span>
                             </span>
                           </div>
-                          <span>Posted by <span className="font-medium">{thread.authorName}</span></span>
                         </div>
-                        <span>•</span>
-                        <span>{formatDistanceToNow(new Date(thread.created_at), { addSuffix: true })}</span>
+                      </motion.div>
+                    )}
+
+                    {/* Thread Metadata */}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pt-4 border-t border-gray-100">
+                      <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                          <span className="text-white font-bold text-sm sm:text-base">
+                            {thread.authorName[0]?.toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                            {thread.authorName}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-500">
+                            {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* Thread Stats and Badges */}
-                    <div className="flex items-center space-x-4">
-                      <div className="bg-gray-50 rounded-xl px-4 py-2">
-                        <div className="flex items-center space-x-2">
-                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                      <div className="flex items-center space-x-4 sm:space-x-6 text-xs sm:text-sm text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          <span className="font-medium">
+                            {posts.length} {posts.length === 1 ? 'reply' : 'replies'}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          <span className="text-sm font-medium text-gray-700">
-                            {thread.view_count} {thread.view_count === 1 ? 'view' : 'views'}
-                          </span>
+                          <span className="font-medium">{thread.view_count} views</span>
                         </div>
                       </div>
-                      
-                      {thread.is_pinned && (
-                        <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          📌 Pinned
-                        </span>
-                      )}
-                      
-                      {thread.is_locked && (
-                        <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          🔒 Locked
-                        </span>
-                      )}
                     </div>
                   </div>
+                </div>
+              </FadeIn>
 
-                  {/* Thread Content */}
-                  <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-                    {thread.content}
-                  </div>
+              {/* Comments Section */}
+              <FadeIn delay={0.2}>
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
+                  <CommentList posts={posts} />
+                </div>
+              </FadeIn>
 
-                  {/* Thread Image Display */}
-                  {thread.image_url && (
-                    <motion.div 
-                      className="mt-8"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                      <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 border border-gray-200 shadow-sm">
-                        <motion.div 
-                          className="relative w-fit max-w-lg mx-auto rounded-xl overflow-hidden cursor-pointer group shadow-lg hover:shadow-xl transition-shadow duration-300"
-                          onClick={() => thread.image_url && window.open(thread.image_url, '_blank')}
+              {/* Reply Form */}
+              {currentUser && !thread.is_locked ? (
+                <FadeIn delay={0.3}>
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
+                    <div className="flex items-center space-x-3 mb-4 sm:mb-6">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                        <span className="text-white text-sm sm:text-base font-medium">
+                          {(profile?.display_name || currentUser.email)?.[0]?.toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm sm:text-base font-semibold text-gray-900">Post a reply</p>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          Replying as {isAnonymousMode ? 'Anonymous' : (profile?.display_name || currentUser.email)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <form onSubmit={handlePostSubmit} className="space-y-4">
+                      <div>
+                        <textarea
+                          value={newPostContent}
+                          onChange={(e) => setNewPostContent(e.target.value)}
+                          placeholder="Share your thoughts on this discussion..."
+                          className="w-full p-3 sm:p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm sm:text-base"
+                          rows={4}
+                          required
+                        />
+                      </div>
+
+                      {/* File Upload */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Attach Image (Optional)
+                        </label>
+                        <FileUpload
+                          onFileUpload={handlePostFileUpload}
+                          onFileRemove={handlePostFileRemove}
+                          currentFile={newPostImageUrl}
+                        />
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                        <div className="text-xs sm:text-sm text-gray-500">
+                          {isAnonymousMode ? (
+                            <span className="flex items-center">
+                              <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                              Posting anonymously
+                            </span>
+                          ) : (
+                            <span className="flex items-center">
+                              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                              Posting as {profile?.display_name || currentUser.email}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <motion.button
+                          type="submit"
+                          disabled={postLoading || !newPostContent.trim()}
+                          className="btn btn-primary w-full sm:w-auto text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          transition={{ duration: 0.2 }}
                         >
-                          <Image
-                            src={thread.image_url}
-                            alt="Thread attachment"
-                            width={800}
-                            height={600}
-                            className="max-w-lg max-h-80 w-auto h-auto object-contain transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
-                          />
-                          {/* Overlay */}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                          {/* Zoom Icon */}
-                          <motion.div 
-                            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                            whileHover={{ scale: 1.1 }}
-                          >
-                            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                            </svg>
-                          </motion.div>
-                        </motion.div>
-                        {/* Image Caption */}
-                        <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-                          <span className="flex items-center space-x-1">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span>Thread attachment</span>
-                          </span>
-                          <span className="flex items-center space-x-1">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                            <span>Click to view full size</span>
-                          </span>
-                        </div>
+                          {postLoading ? (
+                            <span className="flex items-center justify-center">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                              Posting...
+                            </span>
+                          ) : (
+                            'Post Reply'
+                          )}
+                        </motion.button>
                       </div>
-                    </motion.div>
-                  )}
-
-                  {/* Moderation Controls */}
-                  {canModerate && thread && (
-                    <ThreadModeration thread={thread} onUpdate={handleThreadUpdate} />
-                  )}
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* Replies Section */}
-          <FadeIn delay={0.2}>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
-                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <span>Replies ({posts.length})</span>
-                </h2>
-              </div>
-              
-              <CommentList posts={posts} />
-            </div>
-          </FadeIn>
-
-          {/* Reply Form */}
-          {currentUser && !thread.is_locked && (
-            <FadeIn delay={0.3}>
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold">
-                      {(profile?.display_name || currentUser.email)?.[0]?.toUpperCase()}
-                    </span>
+                    </form>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900">Post a reply</h3>
-                    <p className="text-sm text-gray-600">
-                      Replying as {isAnonymousMode ? (
-                        <span className="text-gray-500 font-medium">Anonymous</span>
-                      ) : (
-                        <span className="text-purple-700 font-medium">{profile?.display_name || currentUser.email}</span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-                
-                <form onSubmit={handlePostSubmit} className="space-y-6">
-                  <div>
-                    <textarea
-                      value={newPostContent}
-                      onChange={(e) => setNewPostContent(e.target.value)}
-                      placeholder="Share your thoughts on this discussion..."
-                      rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-700"
-                      disabled={postLoading}
-                    />
-                  </div>
-
-                  {/* Image Upload for Comments */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Attach Image (Optional)
-                    </label>
-                    <FileUpload
-                      onFileUpload={handlePostFileUpload}
-                      onFileRemove={handlePostFileRemove}
-                      currentFile={newPostImageUrl}
-                    />
-                  </div>
-                  
-                  {error && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center space-x-3"
-                    >
-                      <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </FadeIn>
+              ) : !currentUser ? (
+                <FadeIn delay={0.3}>
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span>{error}</span>
-                    </motion.div>
-                  )}
-                  
-                  <div className="flex justify-end">
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Join the conversation</h3>
+                    <p className="text-gray-600 mb-4 text-sm sm:text-base">Sign in to reply to this thread</p>
                     <motion.button
-                      type="submit"
-                      disabled={postLoading || !newPostContent.trim()}
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
-                      whileHover={{ scale: postLoading ? 1 : 1.02 }}
-                      whileTap={{ scale: postLoading ? 1 : 0.98 }}
+                      onClick={() => router.push('/login')}
+                      className="btn btn-primary w-full sm:w-auto text-sm sm:text-base"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      {postLoading ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          <span>Posting...</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                          </svg>
-                          <span>Post Reply</span>
-                        </>
-                      )}
+                      Sign In
                     </motion.button>
                   </div>
-                </form>
-              </div>
-            </FadeIn>
-          )}
-          
-          {/* Locked Thread Message */}
-          {thread.is_locked && (
-            <FadeIn delay={0.3}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center"
-              >
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
+                </FadeIn>
+              ) : thread.is_locked ? (
+                <FadeIn delay={0.3}>
+                  <div className="bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 p-6 sm:p-8 text-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">Thread Locked</h3>
+                    <p className="text-gray-500 text-sm sm:text-base">This thread has been locked and no longer accepts new replies.</p>
+                  </div>
+                </FadeIn>
+              ) : null}
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
+              {/* Thread Moderation */}
+              {canModerate && (
+                <FadeIn delay={0.4}>
+                  <ThreadModeration thread={thread} onUpdate={handleThreadUpdate} />
+                </FadeIn>
+              )}
+
+              {/* Thread Stats */}
+              <FadeIn delay={0.5}>
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Thread Stats</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Created</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true })}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Replies</span>
+                      <span className="text-sm font-medium text-gray-900">{posts.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Views</span>
+                      <span className="text-sm font-medium text-gray-900">{thread.view_count}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Author</span>
+                      <span className="text-sm font-medium text-purple-600">{thread.authorName}</span>
+                    </div>
+                    {thread.last_post_at && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Last reply</span>
+                        <span className="text-sm font-medium text-gray-900">
+                          {formatDistanceToNow(new Date(thread.last_post_at), { addSuffix: true })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-red-800 mb-2">Thread Locked</h3>
-                <p className="text-red-700">This discussion has been locked and no longer accepts new replies.</p>
-              </motion.div>
-            </FadeIn>
-          )}
-          
-          {/* Sign In Prompt */}
-          {!currentUser && !thread.is_locked && (
-            <FadeIn delay={0.3}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-2xl p-8 text-center"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Join the Conversation</h3>
-                <p className="text-gray-600 mb-6">Sign in to share your thoughts and participate in this discussion.</p>
-                <motion.a
-                  href="/login"
-                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
-                  <span>Sign In</span>
-                </motion.a>
-              </motion.div>
-            </FadeIn>
-          )}
+              </FadeIn>
+            </div>
+          </div>
         </div>
       </PageTransition>
     </div>

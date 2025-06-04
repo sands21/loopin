@@ -21,6 +21,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Loopin - Modern Discussion Forum",
   description: "A beautiful discussion forum built with Next.js and Supabase",
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default async function RootLayout({
@@ -29,12 +34,21 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createServerSupabaseClient();
+  
+  // Validate the user first for security
+  await supabase.auth.getUser();
+  
+  // Get session for AuthProvider (after validation)
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
@@ -42,11 +56,11 @@ export default async function RootLayout({
           <MotionProvider>
             <IdentityProvider>
               <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
-                <Header />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
+            <Header />
+            <main className="flex-1">
+        {children}
+            </main>
+            <Footer />
               </div>
             </IdentityProvider>
           </MotionProvider>

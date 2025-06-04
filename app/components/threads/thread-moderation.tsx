@@ -31,8 +31,7 @@ export default function ThreadModeration({ thread, onUpdate }: ThreadModerationP
       if (data) {
         onUpdate(data as Thread)
       }
-    } catch (error) {
-      console.error('Error toggling pin status:', error)
+    } catch {
       setError('Failed to update pin status. Please try again.')
     } finally {
       setLoading(false)
@@ -56,8 +55,7 @@ export default function ThreadModeration({ thread, onUpdate }: ThreadModerationP
       if (data) {
         onUpdate(data as Thread)
       }
-    } catch (error) {
-      console.error('Error toggling lock status:', error)
+    } catch {
       setError('Failed to update lock status. Please try again.')
     } finally {
       setLoading(false)
