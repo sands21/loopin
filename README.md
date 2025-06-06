@@ -1,8 +1,8 @@
-# Loopin - Discussion Forum MVP
+# Loopin - Discussion Forum
 
 A modern, full-featured discussion forum built with Next.js 15, Supabase, TypeScript, and Tailwind CSS. Features real-time discussions, anonymous posting, image uploads, and smooth animations.
 
-## �� Features
+## Features
 
 ### ✅ **Complete MVP Implementation**
 
