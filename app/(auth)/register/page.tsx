@@ -209,11 +209,6 @@ export default function RegisterPage() {
               </motion.a>
             </div>
           </form>
-
-          {/* Development note */}
-          <div className="text-center text-xs text-gray-400 mt-4">
-            <p>Development tip: If email confirmation isn&apos;t working, disable it in your Supabase Auth settings.</p>
-          </div>
         </FadeIn>
       </PageTransition>
     </div>
