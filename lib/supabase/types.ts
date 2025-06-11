@@ -15,6 +15,9 @@ export interface Thread {
   is_locked: boolean
   view_count: number
   post_count: number
+  upvotes: number
+  downvotes: number
+  vote_score: number
   user_email?: string
   user_display_name?: string | null
   display_name?: string | null
@@ -32,6 +35,9 @@ export interface Post {
   created_at: string
   updated_at: string
   is_solution: boolean
+  upvotes: number
+  downvotes: number
+  vote_score: number
   user_email?: string
 }
 
@@ -46,6 +52,17 @@ export interface Profile {
   post_count: number
   thread_count: number
   role: 'user' | 'moderator' | 'admin'
+}
+
+// Vote type representing upvotes/downvotes
+export interface Vote {
+  id: string
+  user_id: string
+  thread_id?: string | null
+  post_id?: string | null
+  vote_type: -1 | 1 // -1 for downvote, 1 for upvote
+  created_at: string
+  updated_at: string
 }
 
 export type Tables = Database['public']['Tables'] 

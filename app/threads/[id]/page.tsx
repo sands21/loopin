@@ -15,6 +15,7 @@ import { useIdentity } from '@/app/components/providers/identity-provider'
 import ThreadModeration from '@/app/components/threads/thread-moderation'
 import CommentList from '@/app/components/threads/comment-list'
 import FileUpload from '@/app/components/ui/file-upload'
+import VoteButtons from '@/app/components/ui/VoteButtons'
 
 interface ThreadWithAuthor extends Thread {
   authorName: string
@@ -330,6 +331,13 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                     {/* Thread Metadata */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pt-4 border-t border-gray-100">
                       <div className="flex items-center space-x-3 sm:space-x-4">
+                        <VoteButtons
+                          threadId={thread.id}
+                          upvotes={thread.upvotes || 0}
+                          downvotes={thread.downvotes || 0}
+                          vote_score={thread.vote_score || 0}
+                          className="mr-2"
+                        />
                         <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                           <span className="text-white font-bold text-sm sm:text-base">
                             {thread.authorName[0]?.toUpperCase()}
@@ -434,17 +442,17 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                     <motion.button
                       type="submit"
                       disabled={postLoading || !newPostContent.trim()}
-                          className="btn btn-primary w-full sm:w-auto text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="btn btn-primary w-full sm:w-auto text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                     >
                       {postLoading ? (
-                            <span className="flex items-center justify-center">
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                              Posting...
+                            <span className="flex items-center justify-center space-x-2">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              <span>Posting...</span>
                             </span>
                       ) : (
-                            'Post Reply'
+                            <span>Post Reply</span>
                       )}
                     </motion.button>
                   </div>

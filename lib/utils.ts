@@ -5,7 +5,7 @@ export async function getPosts(threadId: string) {
     // Fetch posts for this thread
     const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select('*')
+      .select('*, upvotes, downvotes, vote_score')
       .eq('thread_id', threadId)
       .order('created_at', { ascending: true })
 
@@ -49,7 +49,7 @@ export async function getThreads() {
     // Get threads first - no joins needed
     const { data: threadsData, error } = await supabase
       .from('threads')
-      .select('*')
+      .select('*, upvotes, downvotes, vote_score')
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
     
@@ -106,4 +106,114 @@ export function getSiteUrl(): string {
   
   // For client-side, use environment variable or fallback to current origin
   return process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+}
+
+// Voting utility functions
+export async function voteOnThread(threadId: string, voteType: -1 | 1) {
+  try {
+    // First try to update existing vote
+    const { data: existingVote } = await supabase
+      .from('votes')
+      .select('*')
+      .eq('thread_id', threadId)
+      .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+      .single()
+
+    if (existingVote) {
+      if (existingVote.vote_type === voteType) {
+        // Same vote type - remove vote
+        const { error } = await supabase
+          .from('votes')
+          .delete()
+          .eq('id', existingVote.id)
+        if (error) throw error
+      } else {
+        // Different vote type - update vote
+        const { error } = await supabase
+          .from('votes')
+          .update({ vote_type: voteType, updated_at: new Date().toISOString() })
+          .eq('id', existingVote.id)
+        if (error) throw error
+      }
+    } else {
+      // No existing vote - create new vote
+      const { error } = await supabase
+        .from('votes')
+        .insert({
+          thread_id: threadId,
+          vote_type: voteType,
+          user_id: (await supabase.auth.getUser()).data.user?.id
+        })
+      if (error) throw error
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function voteOnPost(postId: string, voteType: -1 | 1) {
+  try {
+    // First try to update existing vote
+    const { data: existingVote } = await supabase
+      .from('votes')
+      .select('*')
+      .eq('post_id', postId)
+      .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+      .single()
+
+    if (existingVote) {
+      if (existingVote.vote_type === voteType) {
+        // Same vote type - remove vote
+        const { error } = await supabase
+          .from('votes')
+          .delete()
+          .eq('id', existingVote.id)
+        if (error) throw error
+      } else {
+        // Different vote type - update vote
+        const { error } = await supabase
+          .from('votes')
+          .update({ vote_type: voteType, updated_at: new Date().toISOString() })
+          .eq('id', existingVote.id)
+        if (error) throw error
+      }
+    } else {
+      // No existing vote - create new vote
+      const { error } = await supabase
+        .from('votes')
+        .insert({
+          post_id: postId,
+          vote_type: voteType,
+          user_id: (await supabase.auth.getUser()).data.user?.id
+        })
+      if (error) throw error
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getUserVote(threadId?: string, postId?: string) {
+  try {
+    const user = (await supabase.auth.getUser()).data.user
+    if (!user) return null
+
+    let query = supabase
+      .from('votes')
+      .select('vote_type')
+      .eq('user_id', user.id)
+
+    if (threadId) {
+      query = query.eq('thread_id', threadId)
+    } else if (postId) {
+      query = query.eq('post_id', postId)
+    } else {
+      return null
+    }
+
+    const { data } = await query.single()
+    return data?.vote_type || null
+  } catch {
+    return null
+  }
 } 

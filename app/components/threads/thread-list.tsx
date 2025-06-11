@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { StaggerContainer, StaggerItem } from '@/app/components/ui/transitions'
 import { useRouter } from 'next/navigation'
+import VoteButtons from '@/app/components/ui/VoteButtons'
 
 interface ThreadListProps {
   threads: Thread[]
@@ -116,6 +117,17 @@ export default function ThreadList({ threads, loading }: ThreadListProps) {
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex items-start space-x-3 sm:space-x-4">
+                  {/* Vote Buttons */}
+                  <div className="flex-shrink-0">
+                    <VoteButtons
+                      threadId={thread.id}
+                      upvotes={thread.upvotes || 0}
+                      downvotes={thread.downvotes || 0}
+                      vote_score={thread.vote_score || 0}
+                      className="mr-2"
+                    />
+                  </div>
+
                   {/* Thread Avatar/Icon */}
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
