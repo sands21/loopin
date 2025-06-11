@@ -6,6 +6,7 @@ import { MotionProvider } from "./components/providers/MotionProvider";
 import { IdentityProvider } from './components/providers/identity-provider'
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { Analytics } from '@vercel/analytics/react';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -65,6 +66,7 @@ export default async function RootLayout({
             </IdentityProvider>
           </MotionProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
