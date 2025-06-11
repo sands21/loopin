@@ -42,6 +42,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
   const [loading, setLoading] = useState(true)
   const [postLoading, setPostLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [replyingTo, setReplyingTo] = useState<{ postId: string; authorName: string } | null>(null)
   
   const { user: currentUser, canModerate, profile } = useUser()
   const { isAnonymousMode } = useIdentity()
@@ -109,7 +110,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
     setError(null)
 
     try {
-      // Insert the post with global anonymous setting
+      // Insert the post with global anonymous setting and parent_id for replies
       const { error: postError } = await supabase
         .from('posts')
         .insert([
@@ -117,6 +118,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
             thread_id: threadId,
             content: newPostContent,
             user_id: currentUser.id,
+            parent_id: replyingTo?.postId || null,
             image_url: newPostImageUrl,
             is_anonymous: isAnonymousMode,
             is_solution: false
@@ -139,6 +141,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
       // Clear the input and refresh the posts
       setNewPostContent('')
       setNewPostImageUrl(null)
+      setReplyingTo(null)
       
       // Refetch the posts using the utility function
       const postsData = await getPosts(threadId)
@@ -161,6 +164,21 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
   const handleThreadUpdate = (updatedThread: Thread) => {
     setThread(prev => prev ? { ...prev, ...updatedThread } : null)
+  }
+
+  const handleReply = (postId: string, authorName: string) => {
+    setReplyingTo({ postId, authorName })
+    // Scroll to the reply form
+    setTimeout(() => {
+      const replyForm = document.getElementById('reply-form')
+      if (replyForm) {
+        replyForm.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }, 100)
+  }
+
+  const cancelReply = () => {
+    setReplyingTo(null)
   }
 
   if (loading) {
@@ -378,14 +396,34 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
               {/* Comments Section */}
           <FadeIn delay={0.2}>
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
-              <CommentList posts={posts} />
+              <CommentList posts={posts} onReply={handleReply} />
             </div>
           </FadeIn>
 
           {/* Reply Form */}
               {currentUser && !thread.is_locked ? (
             <FadeIn delay={0.3}>
-                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
+                  <div id="reply-form" className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
+                    {/* Reply Context */}
+                    {replyingTo && (
+                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4 flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                          </svg>
+                          <span className="text-sm text-purple-700">
+                            Replying to <strong>{replyingTo.authorName}</strong>
+                          </span>
+                        </div>
+                        <button
+                          onClick={cancelReply}
+                          className="text-purple-600 hover:text-purple-800 text-sm font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+
                     <div className="flex items-center space-x-3 mb-4 sm:mb-6">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                         <span className="text-white text-sm sm:text-base font-medium">
@@ -393,7 +431,9 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                     </span>
                   </div>
                   <div>
-                        <p className="text-sm sm:text-base font-semibold text-gray-900">Post a reply</p>
+                        <p className="text-sm sm:text-base font-semibold text-gray-900">
+                          {replyingTo ? `Reply to ${replyingTo.authorName}` : 'Post a reply'}
+                        </p>
                         <p className="text-xs sm:text-sm text-gray-500">
                           Replying as {isAnonymousMode ? 'Anonymous' : (profile?.display_name || currentUser.email)}
                         </p>

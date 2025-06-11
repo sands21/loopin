@@ -8,17 +8,23 @@ interface PostWithAuthor {
   thread_id: string
   content: string
   user_id: string
+  parent_id?: string | null
   is_anonymous: boolean
   image_url?: string | null
   created_at: string
   authorName: string
+  upvotes?: number
+  downvotes?: number
+  vote_score?: number
+  replies?: PostWithAuthor[]
 }
 
 interface CommentListProps {
   posts: PostWithAuthor[]
+  onReply?: (postId: string, authorName: string) => void
 }
 
-export default function CommentList({ posts }: CommentListProps) {
+export default function CommentList({ posts, onReply }: CommentListProps) {
   if (posts.length === 0) {
     return (
       <motion.div
@@ -41,7 +47,7 @@ export default function CommentList({ posts }: CommentListProps) {
     <StaggerContainer>
       {posts.map((post, index) => (
         <StaggerItem key={post.id}>
-          <CommentItem post={post} index={index} />
+          <CommentItem post={post} index={index} onReply={onReply} />
         </StaggerItem>
       ))}
     </StaggerContainer>

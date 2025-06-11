@@ -26,8 +26,8 @@ export async function getPosts(threadId: string) {
     // Create profile lookup map
     const profileMap = new Map(postProfiles.map(p => [p.id, { email: p.email, display_name: p.display_name }]))
 
-    // Return posts with author names (respecting anonymous flag)
-    return (postsData || []).map(post => {
+    // Format posts with author names and organize into nested structure
+    const formattedPosts = (postsData || []).map(post => {
       const profile = profileMap.get(post.user_id)
       const actualAuthorName = profile?.display_name || profile?.email || 'Unknown'
       
@@ -35,10 +35,22 @@ export async function getPosts(threadId: string) {
       const authorName = post.is_anonymous ? 'Anonymous' : actualAuthorName
       
       return {
-      ...post,
+        ...post,
         authorName,
       }
     })
+
+    // Organize into nested structure: top-level posts with their replies
+    const topLevelPosts = formattedPosts.filter(post => !post.parent_id)
+    const replies = formattedPosts.filter(post => post.parent_id)
+
+    // Add replies to their parent posts
+    const postsWithReplies = topLevelPosts.map(post => ({
+      ...post,
+      replies: replies.filter(reply => reply.parent_id === post.id)
+    }))
+
+    return postsWithReplies
   } catch (error) {
     throw error
   }

@@ -30,6 +30,7 @@ export interface Post {
   thread_id: string
   content: string
   user_id: string
+  parent_id?: string | null
   is_anonymous: boolean
   image_url?: string | null
   created_at: string
