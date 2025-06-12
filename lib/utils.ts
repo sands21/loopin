@@ -326,4 +326,79 @@ export async function getFollowedThreads() {
   } catch (error) {
     throw error
   }
+}
+
+// Search utility functions
+export async function searchThreadsAndPosts(query: string) {
+  try {
+    if (!query.trim()) {
+      return { threads: [], posts: [] }
+    }
+
+    // Search threads by title and content
+    const { data: threadsData, error: threadsError } = await supabase
+      .from('threads')
+      .select('*, upvotes, downvotes, vote_score, follow_count')
+      .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+      .order('created_at', { ascending: false })
+
+    if (threadsError) throw threadsError
+
+    // Search posts by content
+    const { data: postsData, error: postsError } = await supabase
+      .from('posts')
+      .select('*, threads!inner(title)')
+      .ilike('content', `%${query}%`)
+      .order('created_at', { ascending: false })
+
+    if (postsError) throw postsError
+
+    // Get profiles for thread authors
+    const threadUserIds = [...new Set((threadsData || []).map(thread => thread.user_id))]
+    const postUserIds = [...new Set((postsData || []).map(post => post.user_id))]
+    const allUserIds = [...new Set([...threadUserIds, ...postUserIds])]
+
+    let profiles: { id: string; email: string; display_name: string | null }[] = []
+    if (allUserIds.length > 0) {
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, email, display_name')
+        .in('id', allUserIds)
+      profiles = profilesData || []
+    }
+
+    const profileMap = new Map(profiles.map(p => [p.id, { email: p.email, display_name: p.display_name }]))
+
+    // Format threads with author information
+    const formattedThreads = (threadsData || []).map(thread => {
+      const profile = profileMap.get(thread.user_id)
+      const actualDisplayName = profile?.display_name || profile?.email || null
+      
+      return {
+        ...thread,
+        user_display_name: thread.is_anonymous ? 'Anonymous' : actualDisplayName,
+        user_email: thread.is_anonymous ? null : profile?.email || null
+      }
+    })
+
+    // Format posts with author information and thread title
+    const formattedPosts = (postsData || []).map(post => {
+      const profile = profileMap.get(post.user_id)
+      const actualDisplayName = profile?.display_name || profile?.email || null
+      
+      return {
+        ...post,
+        user_display_name: post.is_anonymous ? 'Anonymous' : actualDisplayName,
+        user_email: post.is_anonymous ? null : profile?.email || null,
+        thread_title: (post as { threads?: { title: string } }).threads?.title || 'Unknown Thread'
+      }
+    })
+
+    return {
+      threads: formattedThreads,
+      posts: formattedPosts
+    }
+  } catch (error) {
+    throw error
+  }
 } 

@@ -7,6 +7,7 @@ import { getThreads } from '@/lib/utils'
 import { PageTransition, FadeIn } from '@/app/components/ui/transitions'
 import ThreadList from '@/app/components/threads/thread-list'
 import CreateThread from '@/app/components/threads/create-thread'
+
 import { Button } from '@/app/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -21,6 +22,8 @@ export default function ThreadsPage() {
   const [threads, setThreads] = useState<Thread[]>([])
   const [threadsLoading, setThreadsLoading] = useState(true)
   const router = useRouter()
+
+
 
   useEffect(() => {
     async function getUser() {
