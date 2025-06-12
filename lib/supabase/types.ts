@@ -11,6 +11,7 @@ export interface Thread {
   created_at: string
   updated_at: string
   category?: string
+  tags?: string[]
   is_pinned: boolean
   is_locked: boolean
   view_count: number
@@ -73,6 +74,25 @@ export interface ThreadFollow {
   user_id: string
   thread_id: string
   created_at: string
+}
+
+// Category type for thread categorization
+export interface Category {
+  id: string
+  name: string
+  description: string
+  color: string
+  icon?: string
+  created_at: string
+}
+
+// Tag type for thread tagging
+export interface Tag {
+  id: string
+  name: string
+  color: string
+  created_at: string
+  usage_count: number
 }
 
 export type Tables = Database['public']['Tables'] 

@@ -6,6 +6,8 @@ import { motion } from 'framer-motion'
 import { Button } from '@/app/components/ui/button'
 import { Modal } from '@/app/components/ui/modal'
 import FileUpload from '@/app/components/ui/file-upload'
+import CategorySelector from '@/app/components/ui/CategorySelector'
+import TagInput from '@/app/components/ui/TagInput'
 import { useIdentity } from '@/app/components/providers/identity-provider'
 import { supabase } from '@/lib/supabase/client'
 
@@ -18,6 +20,8 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [category, setCategory] = useState('general')
+  const [tags, setTags] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -45,6 +49,8 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
             content,
             user_id: userId,
             image_url: imageUrl,
+            category,
+            tags,
             is_anonymous: isAnonymousMode,
           }
         ])
@@ -57,6 +63,8 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
       setTitle('')
       setContent('')
       setImageUrl(null)
+      setCategory('general')
+      setTags([])
       setError(null)
       setIsModalOpen(false)
       
@@ -80,6 +88,8 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
     setTitle('')
     setContent('')
     setImageUrl(null)
+    setCategory('general')
+    setTags([])
     setError(null)
   }
 
@@ -185,6 +195,18 @@ export default function CreateThread({ userId, userEmail }: CreateThreadProps) {
                 disabled={loading}
               />
             </div>
+
+            {/* Category Selection */}
+            <CategorySelector
+              selectedCategory={category}
+              onCategoryChange={setCategory}
+            />
+
+            {/* Tags Input */}
+            <TagInput
+              tags={tags}
+              onTagsChange={setTags}
+            />
 
             {/* Image Upload Section */}
             <div className="space-y-2">

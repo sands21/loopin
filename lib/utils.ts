@@ -1,5 +1,63 @@
 import { supabase } from './supabase/client'
-import { Thread } from './supabase/types'
+import { Thread, Category } from './supabase/types'
+
+// Predefined categories
+export const CATEGORIES: Category[] = [
+  {
+    id: 'general',
+    name: 'General',
+    description: 'General discussions and topics',
+    color: 'bg-gray-500',
+    icon: '💬',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'technology',
+    name: 'Technology',
+    description: 'Tech discussions, programming, and innovation',
+    color: 'bg-blue-500',
+    icon: '💻',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'lifestyle',
+    name: 'Lifestyle',
+    description: 'Life, hobbies, and personal interests',
+    color: 'bg-green-500',
+    icon: '🌱',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'entertainment',
+    name: 'Entertainment',
+    description: 'Movies, games, music, and fun',
+    color: 'bg-purple-500',
+    icon: '🎮',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'education',
+    name: 'Education',
+    description: 'Learning, courses, and knowledge sharing',
+    color: 'bg-yellow-500',
+    icon: '📚',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    description: 'Entrepreneurship, careers, and professional topics',
+    color: 'bg-indigo-500',
+    icon: '💼',
+    created_at: new Date().toISOString()
+  }
+]
+
+// Popular/suggested tags
+export const SUGGESTED_TAGS = [
+  'discussion', 'question', 'help', 'advice', 'opinion', 'announcement',
+  'tutorial', 'review', 'news', 'tips', 'beginner', 'advanced'
+]
 
 export async function getPosts(threadId: string) {
   try {
@@ -57,12 +115,24 @@ export async function getPosts(threadId: string) {
   }
 }
 
-export async function getThreads() {
+export async function getThreads(category?: string, tags?: string[]) {
   try {
-    // Get threads first - no joins needed
-    const { data: threadsData, error } = await supabase
+    // Build query with optional filters
+    let query = supabase
       .from('threads')
       .select('*, upvotes, downvotes, vote_score, follow_count')
+
+    // Apply category filter if provided
+    if (category && category !== 'all') {
+      query = query.eq('category', category)
+    }
+
+    // Apply tags filter if provided
+    if (tags && tags.length > 0) {
+      query = query.overlaps('tags', tags)
+    }
+
+    const { data: threadsData, error } = await query
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
     
@@ -401,4 +471,15 @@ export async function searchThreadsAndPosts(query: string) {
   } catch (error) {
     throw error
   }
+}
+
+// Get category by ID
+export function getCategoryById(categoryId: string): Category | undefined {
+  return CATEGORIES.find(cat => cat.id === categoryId)
+}
+
+// Get category color class
+export function getCategoryColor(categoryId: string): string {
+  const category = getCategoryById(categoryId)
+  return category?.color || 'bg-gray-500'
 } 
