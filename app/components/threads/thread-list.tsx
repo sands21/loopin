@@ -231,6 +231,17 @@ export default function ThreadList({ threads, loading }: ThreadListProps) {
 
                         <div className="flex items-center space-x-1">
                           <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-5 5v-5z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                          </svg>
+                          <span className="font-medium">
+                            {thread.follow_count || 0}
+                            <span className="hidden sm:inline"> {(thread.follow_count || 0) === 1 ? 'follower' : 'followers'}</span>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-1">
+                          <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                           <span className="font-medium text-purple-600">

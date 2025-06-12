@@ -16,6 +16,7 @@ import ThreadModeration from '@/app/components/threads/thread-moderation'
 import CommentList from '@/app/components/threads/comment-list'
 import FileUpload from '@/app/components/ui/file-upload'
 import VoteButtons from '@/app/components/ui/VoteButtons'
+import FollowButton from '@/app/components/ui/FollowButton'
 
 interface ThreadWithAuthor extends Thread {
   authorName: string
@@ -43,6 +44,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
   const [postLoading, setPostLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [replyingTo, setReplyingTo] = useState<{ postId: string; authorName: string } | null>(null)
+  const [followCount, setFollowCount] = useState(0)
   
   const { user: currentUser, canModerate, profile } = useUser()
   const { isAnonymousMode } = useIdentity()
@@ -88,6 +90,9 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
           authorName: threadData.is_anonymous ? 'Anonymous' : (threadProfile?.display_name || threadProfile?.email || 'Unknown'),
           image_url: threadData.image_url,
         })
+
+        // Initialize follow count
+        setFollowCount(threadData.follow_count || 0)
 
         // Fetch posts using the utility function
         const postsData = await getPosts(threadId)
@@ -179,6 +184,10 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
 
   const cancelReply = () => {
     setReplyingTo(null)
+  }
+
+  const handleFollowChange = (isFollowing: boolean, newCount: number) => {
+    setFollowCount(newCount)
   }
 
   if (loading) {
@@ -387,6 +396,12 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                           </svg>
                           <span className="font-medium">{thread.view_count} views</span>
                         </div>
+                        <FollowButton
+                          threadId={thread.id}
+                          followCount={followCount}
+                          onFollowChange={handleFollowChange}
+                          className="ml-2"
+                        />
                       </div>
                 </div>
               </div>

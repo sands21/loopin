@@ -18,6 +18,7 @@ export interface Thread {
   upvotes: number
   downvotes: number
   vote_score: number
+  follow_count: number
   user_email?: string
   user_display_name?: string | null
   display_name?: string | null
@@ -64,6 +65,14 @@ export interface Vote {
   vote_type: -1 | 1 // -1 for downvote, 1 for upvote
   created_at: string
   updated_at: string
+}
+
+// Thread follow type
+export interface ThreadFollow {
+  id: string
+  user_id: string
+  thread_id: string
+  created_at: string
 }
 
 export type Tables = Database['public']['Tables'] 

@@ -1,4 +1,5 @@
 import { supabase } from './supabase/client'
+import { Thread } from './supabase/types'
 
 export async function getPosts(threadId: string) {
   try {
@@ -61,7 +62,7 @@ export async function getThreads() {
     // Get threads first - no joins needed
     const { data: threadsData, error } = await supabase
       .from('threads')
-      .select('*, upvotes, downvotes, vote_score')
+      .select('*, upvotes, downvotes, vote_score, follow_count')
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
     
@@ -227,5 +228,102 @@ export async function getUserVote(threadId?: string, postId?: string) {
     return data?.vote_type || null
   } catch {
     return null
+  }
+}
+
+// Thread following utility functions
+export async function followThread(threadId: string) {
+  try {
+    const user = (await supabase.auth.getUser()).data.user
+    if (!user) throw new Error('User not authenticated')
+
+    const { error } = await supabase
+      .from('thread_follows')
+      .insert({
+        thread_id: threadId,
+        user_id: user.id
+      })
+    
+    if (error) throw error
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function unfollowThread(threadId: string) {
+  try {
+    const user = (await supabase.auth.getUser()).data.user
+    if (!user) throw new Error('User not authenticated')
+
+    const { error } = await supabase
+      .from('thread_follows')
+      .delete()
+      .eq('thread_id', threadId)
+      .eq('user_id', user.id)
+    
+    if (error) throw error
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function isFollowingThread(threadId: string) {
+  try {
+    const user = (await supabase.auth.getUser()).data.user
+    if (!user) return false
+
+    const { data } = await supabase
+      .from('thread_follows')
+      .select('id')
+      .eq('thread_id', threadId)
+      .eq('user_id', user.id)
+      .single()
+    
+    return !!data
+  } catch {
+    return false
+  }
+}
+
+export async function getFollowedThreads() {
+  try {
+    const user = (await supabase.auth.getUser()).data.user
+    if (!user) return []
+
+    const { data: follows, error } = await supabase
+      .from('thread_follows')
+      .select(`
+        thread_id,
+        threads!inner(*, upvotes, downvotes, vote_score, follow_count)
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    // Extract and format the threads - use unknown conversion for complex nested queries
+    const threads = (follows as unknown as { threads: Thread }[])?.map(follow => follow.threads).filter(Boolean) || []
+    
+    // Get profiles for thread authors
+    const userIds = [...new Set(threads.map(thread => thread.user_id))]
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, email, display_name')
+      .in('id', userIds)
+
+    const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name }]) || [])
+
+    return threads.map(thread => {
+      const profile = profileMap.get(thread.user_id)
+      const actualDisplayName = profile?.display_name || profile?.email || null
+      
+      return {
+        ...thread,
+        user_display_name: thread.is_anonymous ? 'Anonymous' : actualDisplayName,
+        user_email: thread.is_anonymous ? null : profile?.email || null
+      }
+    })
+  } catch (error) {
+    throw error
   }
 } 
