@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/app/hooks/useUser";
 import { supabase } from "@/lib/supabase/client";
 import AnonymousToggle from "./ui/anonymous-toggle";
+import Avatar from "./ui/avatar";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,10 +23,7 @@ export function Header() {
     return profile?.display_name || user?.email || 'User';
   };
 
-  const getUserInitial = () => {
-    const displayName = getUserDisplayName();
-    return displayName[0]?.toUpperCase() || 'U';
-  };
+
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -81,10 +79,13 @@ export function Header() {
                   </motion.span>
                 </Link>
                 <div className="flex items-center space-x-3">
-                  <Link href="/profile" className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
-                    <span className="text-white text-sm font-medium">
-                      {getUserInitial()}
-                    </span>
+                  <Link href="/profile">
+                    <Avatar
+                      src={profile?.avatar_url}
+                      name={getUserDisplayName()}
+                      size="md"
+                      className="shadow-lg hover:shadow-xl transition-shadow"
+                    />
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -177,11 +178,11 @@ export function Header() {
                 ) : user ? (
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">
-                          {getUserInitial()}
-                        </span>
-                      </div>
+                      <Avatar
+                        src={profile?.avatar_url}
+                        name={getUserDisplayName()}
+                        size="md"
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {getUserDisplayName()}

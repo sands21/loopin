@@ -26,10 +26,9 @@ export function useUser(): UseUserReturn {
   });
 
   useEffect(() => {
-    // Get initial session
+    // Get initial user data
     async function getInitialSession() {
       const { data: { user } } = await supabase.auth.getUser();
-      const { data: { session } } = await supabase.auth.getSession();
       
       let profile: Profile | null = null;
       if (user) {
@@ -45,7 +44,7 @@ export function useUser(): UseUserReturn {
       
       setAuthState({
         user: user,
-        session: session,
+        session: null, // Session will be set by onAuthStateChange
         profile: profile,
         isLoading: false,
       });

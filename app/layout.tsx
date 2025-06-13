@@ -36,13 +36,8 @@ export default async function RootLayout({
 }>) {
   const supabase = await createServerSupabaseClient();
   
-  // Validate the user first for security
+  // Validate user on server for security
   await supabase.auth.getUser();
-  
-  // Get session for AuthProvider (after validation)
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
 
   return (
     <html lang="en">
@@ -53,7 +48,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <AuthProvider initialSession={session}>
+        <AuthProvider initialSession={null}>
           <MotionProvider>
             <IdentityProvider>
               <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import VoteButtons from '@/app/components/ui/VoteButtons'
+import Avatar from '@/app/components/ui/avatar'
 
 interface PostWithAuthor {
   id: string
@@ -14,6 +15,7 @@ interface PostWithAuthor {
   image_url?: string | null
   created_at: string
   authorName: string
+  authorAvatarUrl?: string | null
   upvotes?: number
   downvotes?: number
   vote_score?: number
@@ -101,15 +103,16 @@ export default function CommentItem({ post, index, onReply, isReply = false }: C
 
         {/* Reply Avatar */}
         <div className="flex-shrink-0">
-            <div className={`w-10 h-10 bg-gradient-to-br ${
+          <Avatar
+            src={post.authorAvatarUrl}
+            name={displayName}
+            size="md"
+            className={`${
               isReply 
                 ? 'from-green-500 to-blue-500' 
                 : 'from-blue-500 to-purple-500'
-            } rounded-xl flex items-center justify-center shadow-md`}>
-            <span className="text-white font-medium text-sm">
-              {displayName[0]?.toUpperCase()}
-            </span>
-          </div>
+            } shadow-md`}
+          />
         </div>
 
         {/* Reply Content */}

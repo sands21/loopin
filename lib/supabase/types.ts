@@ -22,6 +22,7 @@ export interface Thread {
   follow_count: number
   user_email?: string
   user_display_name?: string | null
+  user_avatar_url?: string | null
   display_name?: string | null
   last_post_at: string | null
 }

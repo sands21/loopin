@@ -17,9 +17,11 @@ import CommentList from '@/app/components/threads/comment-list'
 import FileUpload from '@/app/components/ui/file-upload'
 import VoteButtons from '@/app/components/ui/VoteButtons'
 import FollowButton from '@/app/components/ui/FollowButton'
+import Avatar from '@/app/components/ui/avatar'
 
 interface ThreadWithAuthor extends Thread {
   authorName: string
+  authorAvatarUrl?: string | null
   image_url?: string | null
 }
 
@@ -74,7 +76,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         // Get thread author's profile
         const { data: threadProfile } = await supabase
           .from('profiles')
-          .select('email, display_name')
+          .select('email, display_name, avatar_url')
           .eq('id', threadData.user_id)
           .single()
 
@@ -88,6 +90,7 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
         setThread({
           ...threadData,
           authorName: threadData.is_anonymous ? 'Anonymous' : (threadProfile?.display_name || threadProfile?.email || 'Unknown'),
+          authorAvatarUrl: threadData.is_anonymous ? null : threadProfile?.avatar_url || null,
           image_url: threadData.image_url,
         })
 
@@ -365,11 +368,12 @@ export default function ThreadPage({ params }: { params: Promise<{ id: string }>
                           vote_score={thread.vote_score || 0}
                           className="mr-2"
                         />
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                          <span className="text-white font-bold text-sm sm:text-base">
-                            {thread.authorName[0]?.toUpperCase()}
-                          </span>
-                        </div>
+                        <Avatar
+                          src={thread.authorAvatarUrl}
+                          name={thread.authorName}
+                          size="md"
+                          className="shadow-lg"
+                        />
                         <div>
                           <p className="font-semibold text-gray-900 text-sm sm:text-base">
                             {thread.authorName}

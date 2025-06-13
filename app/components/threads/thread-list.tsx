@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Thread } from '@/lib/supabase/types'
+import type { Thread } from '@/lib/supabase/types'
 import { formatDistanceToNow } from 'date-fns'
 import { motion } from 'framer-motion'
 import { StaggerContainer, StaggerItem } from '@/app/components/ui/transitions'
 import { useRouter } from 'next/navigation'
 import VoteButtons from '@/app/components/ui/VoteButtons'
+import Avatar from '@/app/components/ui/avatar'
 
 interface ThreadListProps {
   threads: Thread[]
@@ -128,13 +129,14 @@ export default function ThreadList({ threads, loading }: ThreadListProps) {
                     />
                   </div>
 
-                  {/* Thread Avatar/Icon */}
+                  {/* Thread Avatar */}
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                      <span className="text-white font-bold text-sm sm:text-lg">
-                        {thread.title[0]?.toUpperCase() || 'T'}
-                      </span>
-                    </div>
+                    <Avatar
+                      src={thread.user_avatar_url}
+                      name={thread.user_display_name || 'Anonymous'}
+                      size="lg"
+                      className="shadow-lg group-hover:shadow-xl transition-shadow duration-300"
+                    />
                   </div>
 
                   {/* Thread Content */}

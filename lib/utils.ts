@@ -72,18 +72,18 @@ export async function getPosts(threadId: string) {
 
     // Get profiles for all post authors
     const postUserIds = postsData ? [...new Set(postsData.map(post => post.user_id))] : []
-    let postProfiles: { id: string; email: string; display_name: string | null }[] = []
+    let postProfiles: { id: string; email: string; display_name: string | null; avatar_url: string | null }[] = []
     
     if (postUserIds.length > 0) {
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, email, display_name')
+        .select('id, email, display_name, avatar_url')
         .in('id', postUserIds)
       postProfiles = profiles || []
     }
 
     // Create profile lookup map
-    const profileMap = new Map(postProfiles.map(p => [p.id, { email: p.email, display_name: p.display_name }]))
+    const profileMap = new Map(postProfiles.map(p => [p.id, { email: p.email, display_name: p.display_name, avatar_url: p.avatar_url }]))
 
     // Format posts with author names and organize into nested structure
     const formattedPosts = (postsData || []).map(post => {
@@ -92,10 +92,12 @@ export async function getPosts(threadId: string) {
       
       // Use "Anonymous" if the post is marked as anonymous, otherwise use actual name
       const authorName = post.is_anonymous ? 'Anonymous' : actualAuthorName
+      const authorAvatarUrl = post.is_anonymous ? null : profile?.avatar_url || null
       
       return {
         ...post,
         authorName,
+        authorAvatarUrl,
       }
     })
 
@@ -150,7 +152,7 @@ export async function getThreads(category?: string, tags?: string[]) {
     // Fetch profiles for these user IDs
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, email, display_name')
+      .select('id, email, display_name, avatar_url')
       .in('id', userIds)
     
     if (profilesError) {
@@ -159,7 +161,7 @@ export async function getThreads(category?: string, tags?: string[]) {
     }
 
     // Create a map for quick lookup
-    const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name }]) || [])
+    const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name, avatar_url: p.avatar_url }]) || [])
 
     // Combine threads with usernames/emails (respecting anonymous flag)
     return threadsData.map(thread => {
@@ -169,11 +171,13 @@ export async function getThreads(category?: string, tags?: string[]) {
       // Use "Anonymous" if the thread is marked as anonymous, otherwise use actual name
       const user_display_name = thread.is_anonymous ? 'Anonymous' : actualDisplayName
       const user_email = thread.is_anonymous ? null : profile?.email || null
+      const user_avatar_url = thread.is_anonymous ? null : profile?.avatar_url || null
       
       return {
       ...thread,
         user_email,
-        user_display_name
+        user_display_name,
+        user_avatar_url
       }
     })
   } catch (error) {
@@ -378,10 +382,10 @@ export async function getFollowedThreads() {
     const userIds = [...new Set(threads.map(thread => thread.user_id))]
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, email, display_name')
+      .select('id, email, display_name, avatar_url')
       .in('id', userIds)
 
-    const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name }]) || [])
+    const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name, avatar_url: p.avatar_url }]) || [])
 
     return threads.map(thread => {
       const profile = profileMap.get(thread.user_id)
@@ -390,7 +394,8 @@ export async function getFollowedThreads() {
       return {
         ...thread,
         user_display_name: thread.is_anonymous ? 'Anonymous' : actualDisplayName,
-        user_email: thread.is_anonymous ? null : profile?.email || null
+        user_email: thread.is_anonymous ? null : profile?.email || null,
+        user_avatar_url: thread.is_anonymous ? null : profile?.avatar_url || null
       }
     })
   } catch (error) {
@@ -428,16 +433,16 @@ export async function searchThreadsAndPosts(query: string) {
     const postUserIds = [...new Set((postsData || []).map(post => post.user_id))]
     const allUserIds = [...new Set([...threadUserIds, ...postUserIds])]
 
-    let profiles: { id: string; email: string; display_name: string | null }[] = []
+    let profiles: { id: string; email: string; display_name: string | null; avatar_url: string | null }[] = []
     if (allUserIds.length > 0) {
       const { data: profilesData } = await supabase
         .from('profiles')
-        .select('id, email, display_name')
+        .select('id, email, display_name, avatar_url')
         .in('id', allUserIds)
       profiles = profilesData || []
     }
 
-    const profileMap = new Map(profiles.map(p => [p.id, { email: p.email, display_name: p.display_name }]))
+    const profileMap = new Map(profiles.map(p => [p.id, { email: p.email, display_name: p.display_name, avatar_url: p.avatar_url }]))
 
     // Format threads with author information
     const formattedThreads = (threadsData || []).map(thread => {
@@ -447,7 +452,8 @@ export async function searchThreadsAndPosts(query: string) {
       return {
         ...thread,
         user_display_name: thread.is_anonymous ? 'Anonymous' : actualDisplayName,
-        user_email: thread.is_anonymous ? null : profile?.email || null
+        user_email: thread.is_anonymous ? null : profile?.email || null,
+        user_avatar_url: thread.is_anonymous ? null : profile?.avatar_url || null
       }
     })
 

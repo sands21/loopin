@@ -6,11 +6,13 @@ import { supabase } from '@/lib/supabase/client'
 import { useUser } from '@/app/hooks/useUser'
 import { motion } from 'framer-motion'
 import { PageTransition, FadeIn } from '@/app/components/ui/transitions'
+import AvatarUpload from '@/app/components/ui/avatar-upload'
 
 export default function ProfilePage() {
   const { user, profile, isLoading } = useUser()
   const [username, setUsername] = useState('')
   const [bio, setBio] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null)
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -22,6 +24,7 @@ export default function ProfilePage() {
     if (profile) {
       setUsername(profile.display_name || '')
       setBio(profile.bio || '')
+      setAvatarUrl(profile.avatar_url || null)
     }
   }, [profile])
 
@@ -99,6 +102,7 @@ export default function ProfilePage() {
           email: user.email!,
           display_name: username.trim() || null,
           bio: bio.trim() || null,
+          avatar_url: avatarUrl,
         })
 
       if (error) throw error
@@ -141,10 +145,12 @@ export default function ProfilePage() {
           <FadeIn>
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-2xl">
-                    {(username || user.email)?.[0]?.toUpperCase()}
-                  </span>
+                <div className="mb-6">
+                  <AvatarUpload
+                    currentAvatarUrl={avatarUrl}
+                    onAvatarUpdate={setAvatarUrl}
+                    userName={username || user.email || 'User'}
+                  />
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
                 <p className="text-gray-600">Customize your profile and username</p>
