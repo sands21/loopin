@@ -3,10 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { AuthProvider } from "./components/providers/AuthProvider";
 import { MotionProvider } from "./components/providers/MotionProvider";
-import { IdentityProvider } from './components/providers/identity-provider'
+import { IdentityProvider } from "./components/providers/identity-provider";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   title: "Loopin - Modern Discussion Forum",
   description: "A beautiful discussion forum built with Next.js and Supabase",
   icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
@@ -35,7 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createServerSupabaseClient();
-  
+
   // Validate user on server for security
   await supabase.auth.getUser();
 
@@ -46,17 +46,15 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full bg-gradient-to-br from-gray-50 via-white to-purple-50`}
       >
         <AuthProvider initialSession={null}>
           <MotionProvider>
             <IdentityProvider>
-              <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
-            <Header />
-            <main className="flex-1">
-        {children}
-            </main>
-            <Footer />
+              <div className="min-h-screen">
+                <Header />
+                <main>{children}</main>
+                <Footer />
               </div>
             </IdentityProvider>
           </MotionProvider>
