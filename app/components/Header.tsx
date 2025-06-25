@@ -48,7 +48,7 @@ export function Header() {
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ duration: 0.2 }}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden shadow-lg"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden"
               >
                 <Image
                   src="/logo.png"
